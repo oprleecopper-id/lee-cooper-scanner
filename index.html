@@ -11,20 +11,16 @@
 
   <title>LEE COOPER - SCANNER</title>
 
-
   <!-- HTML5 QR CODE -->
-
   <script
     src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js">
   </script>
-
 
   <style>
 
     * {
       box-sizing: border-box;
     }
-
 
     body {
 
@@ -51,7 +47,6 @@
 
     }
 
-
     .container {
 
       width: 100%;
@@ -70,7 +65,6 @@
 
     }
 
-
     .title {
 
       text-align: center;
@@ -83,7 +77,6 @@
 
     }
 
-
     .subtitle {
 
       text-align: center;
@@ -95,7 +88,6 @@
       margin-bottom: 20px;
 
     }
-
 
     #reader {
 
@@ -111,7 +103,6 @@
 
     }
 
-
     .status {
 
       text-align: center;
@@ -125,7 +116,6 @@
       line-height: 1.5;
 
     }
-
 
     .error {
 
@@ -146,7 +136,6 @@
       font-size: 14px;
 
     }
-
 
     .back {
 
@@ -174,14 +163,6 @@
 
     }
 
-
-    .back:hover {
-
-      background: #c62828;
-
-    }
-
-
     .success {
 
       display: none;
@@ -204,14 +185,13 @@
 
     }
 
-
     .checking {
 
       display: none;
 
-      background: #29230d;
+      background: #252525;
 
-      color: #ffe28a;
+      color: #ddd;
 
       padding: 15px;
 
@@ -223,10 +203,7 @@
 
       font-size: 16px;
 
-      font-weight: 700;
-
     }
-
 
     @media(max-width:600px) {
 
@@ -260,16 +237,12 @@
 
 
   <div class="title">
-
     LEE COOPER
-
   </div>
 
 
   <div class="subtitle">
-
     SCANNER BARCODE SKU
-
   </div>
 
 
@@ -289,7 +262,7 @@
     id="checking"
     class="checking">
 
-    MEMERIKSA SKU...
+    🔎 Memeriksa SKU...
 
   </div>
 
@@ -298,7 +271,7 @@
     id="success"
     class="success">
 
-    ✓ BARCODE TERBACA
+    ✓ SKU VALID
 
   </div>
 
@@ -328,24 +301,11 @@
    KONFIGURASI
    ========================================================= */
 
-let scanner =
-  null;
+let scanner = null;
 
-let scannerAktif =
-  false;
+let scannerAktif = false;
 
-let barcodeSedangDicek =
-  false;
-
-
-/*
- * URL WEB APP APPS SCRIPT
- *
- * INI HARUS URL /exec ANDA.
- */
-
-const APPS_SCRIPT_URL =
-  "https://script.google.com/macros/s/AKfycbx50fn9Y6LK_4VI0WytJlALv-uelJLRNn9pDKPIEwLNU3RUdkqu6f5Lnxc3IjyJezTv-A/exec";
+let barcodeSedangDiproses = false;
 
 
 /* =========================================================
@@ -353,31 +313,20 @@ const APPS_SCRIPT_URL =
    ========================================================= */
 
 const statusBox =
-  document.getElementById(
-    "status"
-  );
-
+  document.getElementById("status");
 
 const errorBox =
-  document.getElementById(
-    "error"
-  );
-
+  document.getElementById("error");
 
 const successBox =
-  document.getElementById(
-    "success"
-  );
-
+  document.getElementById("success");
 
 const checkingBox =
-  document.getElementById(
-    "checking"
-  );
+  document.getElementById("checking");
 
 
 /* =========================================================
-   URL FORM
+   AMBIL RETURN URL
    ========================================================= */
 
 function getReturnUrl() {
@@ -387,144 +336,31 @@ function getReturnUrl() {
       window.location.search
     );
 
-
-  const returnUrl =
-    params.get(
-      "return"
-    );
-
-
-  /*
-   * Jika tidak ada return URL,
-   * gunakan URL Apps Script utama.
-   */
-
-  if (
-    returnUrl
-  ) {
-
-    return returnUrl;
-
-  }
-
-
-  return APPS_SCRIPT_URL;
+  return params.get("return");
 
 }
 
 
 /* =========================================================
-   KIRIM KE FORM
+   TAMPILKAN ERROR
    ========================================================= */
 
-function kirimKeForm(
-  sku
-) {
+function tampilkanError(message) {
 
-  if (
-    window.opener &&
-    !window.opener.closed
-  ) {
+  errorBox.innerHTML =
+    message;
 
-    window.opener.postMessage(
-
-      {
-
-        type:
-          "LEE_COOPER_BARCODE",
-
-        sku:
-          sku
-
-      },
-
-      "*"
-
-    );
-
-    return true;
-
-  }
-
-
-  return false;
+  errorBox.style.display =
+    "block";
 
 }
 
 
 /* =========================================================
-   STATUS SIAP
+   RESET PESAN
    ========================================================= */
 
-function kirimStatusSiap() {
-
-  if (
-    window.opener &&
-    !window.opener.closed
-  ) {
-
-    window.opener.postMessage(
-
-      {
-
-        type:
-          "LEE_COOPER_SCANNER_READY"
-
-      },
-
-      "*"
-
-    );
-
-  }
-
-}
-
-
-/* =========================================================
-   BARCODE TERBACA
-   ========================================================= */
-
-async function barcodeBerhasil(
-  decodedText
-) {
-
-
-  /*
-   * Jangan proses dua barcode
-   * secara bersamaan.
-   */
-
-  if (
-    barcodeSedangDicek
-  ) {
-
-    return;
-
-  }
-
-
-  const sku =
-    String(
-      decodedText || ""
-    )
-    .trim();
-
-
-  if (!sku) {
-
-    return;
-
-  }
-
-
-  barcodeSedangDicek =
-    true;
-
-
-  /*
-   * UI
-   */
+function resetPesan() {
 
   errorBox.style.display =
     "none";
@@ -533,271 +369,7 @@ async function barcodeBerhasil(
     "none";
 
   checkingBox.style.display =
-    "block";
-
-
-  statusBox.textContent =
-    "Barcode terbaca. Memeriksa SKU...";
-
-
-  /*
-   * STOP CAMERA SEMENTARA
-   *
-   * Kamera dihentikan agar barcode
-   * tidak terbaca berkali-kali.
-   */
-
-  await stopScanner();
-
-
-  /*
-   * URL Apps Script
-   */
-
-  const returnUrl =
-    getReturnUrl();
-
-
-  try {
-
-
-    /*
-     * BUAT URL CEK SKU
-     */
-
-    const separator =
-      returnUrl.includes("?")
-        ? "&"
-        : "?";
-
-
-    const checkUrl =
-      returnUrl +
-      separator +
-      "checkSku=" +
-      encodeURIComponent(
-        sku
-      );
-
-
-    /*
-     * PANGGIL APPS SCRIPT
-     */
-
-    const response =
-      await fetch(
-        checkUrl,
-        {
-          method:
-            "GET",
-
-          cache:
-            "no-store"
-        }
-      );
-
-
-    if (
-      !response.ok
-    ) {
-
-      throw new Error(
-        "Server Apps Script tidak dapat dihubungi."
-      );
-
-    }
-
-
-    const hasil =
-      await response.json();
-
-
-    checkingBox.style.display =
-      "none";
-
-
-    /*
-     * =====================================================
-     * SKU TIDAK ADA
-     * =====================================================
-     */
-
-    if (
-      !hasil ||
-      hasil.valid !== true
-    ) {
-
-      barcodeSedangDicek =
-        false;
-
-
-      errorBox.innerHTML =
-
-        "<b>✕ SKU DITOLAK</b>" +
-
-        "<br><br>" +
-
-        "SKU <b>" +
-
-        escapeHtml(
-          sku
-        ) +
-
-        "</b> tidak ditemukan " +
-
-        "di <b>REKAP STOK</b>." +
-
-        "<br><br>" +
-
-        "Barcode tidak dikirim ke Form.";
-
-
-      errorBox.style.display =
-        "block";
-
-
-      statusBox.textContent =
-        "SKU tidak terdaftar. Silakan scan lagi.";
-
-
-      /*
-       * Kamera hidup lagi.
-       */
-
-      await mulaiScanner();
-
-
-      return;
-
-    }
-
-
-    /*
-     * =====================================================
-     * SKU VALID
-     * =====================================================
-     */
-
-    successBox.innerHTML =
-
-      "✓ SKU VALID" +
-
-      "<br><br>" +
-
-      "<b>" +
-
-      escapeHtml(
-        sku
-      ) +
-
-      "</b>";
-
-
-    successBox.style.display =
-      "block";
-
-
-    statusBox.textContent =
-      "SKU valid. Mengirim ke Form...";
-
-
-    /*
-     * KIRIM KE FORM
-     */
-
-    const berhasilKirim =
-      kirimKeForm(
-        sku
-      );
-
-
-    if (
-      !berhasilKirim
-    ) {
-
-      throw new Error(
-        "Halaman Form Daily Stock tidak ditemukan."
-      );
-
-    }
-
-
-    statusBox.textContent =
-      "✓ SKU berhasil dikirim ke Form.";
-
-
-    /*
-     * TUTUP SCANNER
-     */
-
-    setTimeout(
-      function() {
-
-        try {
-
-          window.close();
-
-        }
-
-        catch(error) {
-
-          console.log(
-            error
-          );
-
-        }
-
-      },
-      700
-    );
-
-  }
-
-
-  catch(error) {
-
-    console.error(
-      error
-    );
-
-
-    checkingBox.style.display =
-      "none";
-
-
-    barcodeSedangDicek =
-      false;
-
-
-    errorBox.innerHTML =
-
-      "<b>GAGAL MEMERIKSA SKU</b>" +
-
-      "<br><br>" +
-
-      escapeHtml(
-
-        error.message ||
-        String(error)
-
-      );
-
-
-    errorBox.style.display =
-      "block";
-
-
-    statusBox.textContent =
-      "Gagal menghubungi server.";
-
-
-    /*
-     * Coba hidupkan kamera kembali.
-     */
-
-    await mulaiScanner();
-
-  }
+    "none";
 
 }
 
@@ -830,7 +402,6 @@ async function stopScanner() {
 
   }
 
-
   scannerAktif =
     false;
 
@@ -838,49 +409,326 @@ async function stopScanner() {
 
 
 /* =========================================================
-   ERROR KAMERA
+   BARCODE BERHASIL
    ========================================================= */
 
-function tampilkanError(
-  message
+async function barcodeBerhasil(
+  decodedText
 ) {
 
-  errorBox.innerHTML =
-    message;
+  /*
+   * Jangan proses barcode kedua
+   * saat barcode pertama sedang dicek.
+   */
 
-  errorBox.style.display =
-    "block";
+  if (barcodeSedangDiproses) {
+    return;
+  }
+
+
+  const sku =
+    String(
+      decodedText || ""
+    ).trim();
+
+
+  if (!sku) {
+    return;
+  }
+
+
+  barcodeSedangDiproses =
+    true;
+
+
+  resetPesan();
 
 
   statusBox.textContent =
-    "Kamera tidak dapat digunakan.";
-
-}
+    "Barcode terbaca.";
 
 
-/* =========================================================
-   MULAI SCANNER
-   ========================================================= */
-
-async function mulaiScanner() {
+  checkingBox.style.display =
+    "block";
 
 
   /*
-   * Jangan membuat scanner
-   * kedua jika sudah aktif.
+   * AMBIL URL FORM
    */
 
-  if (
-    scannerAktif
-  ) {
+  const returnUrl =
+    getReturnUrl();
+
+
+  /*
+   * Jika scanner dibuka langsung,
+   * bukan dari Form Daily Stock.
+   */
+
+  if (!returnUrl) {
+
+    barcodeSedangDiproses =
+      false;
+
+    checkingBox.style.display =
+      "none";
+
+    tampilkanError(
+
+      "<b>LINK FORM TIDAK DITEMUKAN</b>" +
+
+      "<br><br>" +
+
+      "Scanner harus dibuka dari " +
+
+      "Form Daily Stock."
+
+    );
+
+    statusBox.textContent =
+      "Scanner belum terhubung ke Form.";
 
     return;
 
   }
 
 
+  try {
+
+    /*
+     * CEK SKU KE APPS SCRIPT
+     */
+
+    const separator =
+      returnUrl.includes("?")
+        ? "&"
+        : "?";
+
+
+    const checkUrl =
+      returnUrl +
+      separator +
+      "checkSku=" +
+      encodeURIComponent(sku);
+
+
+    const response =
+      await fetch(
+        checkUrl,
+        {
+          method: "GET",
+          cache: "no-store"
+        }
+      );
+
+
+    if (!response.ok) {
+
+      throw new Error(
+        "Server Apps Script tidak dapat dihubungi."
+      );
+
+    }
+
+
+    const hasil =
+      await response.json();
+
+
+    /*
+     * SKU TIDAK ADA
+     */
+
+    if (
+      !hasil ||
+      hasil.valid !== true
+    ) {
+
+      barcodeSedangDiproses =
+        false;
+
+
+      checkingBox.style.display =
+        "none";
+
+
+      successBox.style.display =
+        "none";
+
+
+      tampilkanError(
+
+        "<b>✕ SKU DITOLAK</b>" +
+
+        "<br><br>" +
+
+        "SKU <b>" +
+        escapeHtml(sku) +
+        "</b> tidak ditemukan " +
+
+        "di <b>REKAP STOK</b>." +
+
+        "<br><br>" +
+
+        "Barcode tidak dikirim ke Form."
+
+      );
+
+
+      statusBox.textContent =
+        "Silakan scan SKU yang terdaftar.";
+
+
+      /*
+       * Kamera tetap hidup.
+       * User bisa langsung scan lagi.
+       */
+
+      return;
+
+    }
+
+
+    /*
+     * SKU VALID
+     */
+
+    checkingBox.style.display =
+      "none";
+
+
+    successBox.innerHTML =
+
+      "✓ SKU VALID" +
+
+      "<br><br>" +
+
+      "<b>" +
+      escapeHtml(sku) +
+      "</b>";
+
+
+    successBox.style.display =
+      "block";
+
+
+    statusBox.textContent =
+      "SKU valid. Mengirim ke Form...";
+
+
+    /*
+     * KIRIM SKU KE FORM
+     */
+
+    if (
+      window.opener &&
+      !window.opener.closed
+    ) {
+
+      window.opener.postMessage(
+
+        {
+          type:
+            "LEE_COOPER_BARCODE",
+
+          sku:
+            sku
+
+        },
+
+        "*"
+
+      );
+
+    }
+
+
+    /*
+     * STOP CAMERA
+     */
+
+    await stopScanner();
+
+
+    statusBox.textContent =
+      "✓ SKU berhasil dikirim ke Form.";
+
+
+    /*
+     * TUTUP TAB SCANNER
+     */
+
+    setTimeout(
+      function() {
+
+        try {
+
+          window.close();
+
+        }
+
+        catch(error) {
+
+          console.log(error);
+
+        }
+
+      },
+      700
+    );
+
+
+  }
+
+  catch(error) {
+
+    console.error(
+      "ERROR CHECK SKU:",
+      error
+    );
+
+
+    barcodeSedangDiproses =
+      false;
+
+
+    checkingBox.style.display =
+      "none";
+
+
+    tampilkanError(
+
+      "<b>GAGAL MEMERIKSA SKU</b>" +
+
+      "<br><br>" +
+
+      escapeHtml(
+        error.message ||
+        String(error)
+      )
+
+    );
+
+
+    statusBox.textContent =
+      "Kamera tetap aktif. Silakan coba lagi.";
+
+  }
+
+}
+
+
+/* =========================================================
+   START SCANNER
+   ========================================================= */
+
+async function mulaiScanner() {
+
+  resetPesan();
+
+
   /*
-   * Library
+   * Pastikan library tersedia
    */
 
   if (
@@ -894,34 +742,26 @@ async function mulaiScanner() {
 
       "<br><br>" +
 
-      "Pastikan internet aktif " +
-
-      "kemudian refresh halaman."
+      "Pastikan internet aktif lalu refresh halaman."
 
     );
+
+    statusBox.textContent =
+      "Library scanner tidak tersedia.";
 
     return;
 
   }
 
 
-  /*
-   * Bersihkan pesan lama
-   */
-
-  errorBox.style.display =
-    "none";
-
-
   try {
-
 
     statusBox.textContent =
       "Meminta izin kamera...";
 
 
     /*
-     * Buat scanner baru
+     * BUAT OBJECT SCANNER
      */
 
     scanner =
@@ -931,29 +771,22 @@ async function mulaiScanner() {
 
 
     /*
-     * KONFIGURASI
+     * KONFIGURASI SCANNER
      */
 
     const config = {
 
-      fps:
-        10,
-
+      fps: 10,
 
       qrbox:
-        function(
-          width,
-          height
-        ) {
+        function(width, height) {
 
           const size =
             Math.floor(
-
               Math.min(
                 width,
                 height
               ) * 0.72
-
             );
 
 
@@ -994,24 +827,19 @@ async function mulaiScanner() {
 
 
     /*
-     * START CAMERA
+     * MULAI KAMERA
      */
 
     await scanner.start(
 
       {
-
         facingMode:
           "environment"
-
       },
 
       config,
 
-
-      function(
-        decodedText
-      ) {
+      function(decodedText) {
 
         barcodeBerhasil(
           decodedText
@@ -1019,14 +847,11 @@ async function mulaiScanner() {
 
       },
 
-
-      function(
-        errorMessage
-      ) {
+      function(errorMessage) {
 
         /*
          * Error scan sementara
-         * tidak ditampilkan.
+         * diabaikan.
          */
 
       }
@@ -1042,40 +867,47 @@ async function mulaiScanner() {
       "Kamera aktif. Arahkan ke barcode SKU.";
 
 
-    kirimStatusSiap();
+    /*
+     * INFORMASIKAN FORM
+     * BAHWA SCANNER SUDAH SIAP
+     */
+
+    if (
+      window.opener &&
+      !window.opener.closed
+    ) {
+
+      window.opener.postMessage(
+
+        {
+          type:
+            "LEE_COOPER_SCANNER_READY"
+        },
+
+        "*"
+
+      );
+
+    }
 
   }
 
-
   catch(error) {
 
-
     console.error(
+      "CAMERA ERROR:",
       error
     );
 
 
-    /*
-     * Reset scanner
-     */
-
-    scanner =
-      null;
-
-    scannerAktif =
-      false;
-
-
     const text =
       String(
-
         error &&
         (
           error.message ||
           error.name ||
           error
         )
-
       );
 
 
@@ -1083,28 +915,16 @@ async function mulaiScanner() {
       text.toLowerCase();
 
 
-    /*
-     * IZIN KAMERA
-     */
-
     if (
-
       lower.includes(
         "notallowederror"
-      )
-
-      ||
-
+      ) ||
       lower.includes(
         "permission"
-      )
-
-      ||
-
+      ) ||
       lower.includes(
         "denied"
       )
-
     ) {
 
       tampilkanError(
@@ -1124,22 +944,10 @@ async function mulaiScanner() {
     }
 
 
-    /*
-     * KAMERA TIDAK ADA
-     */
-
     else if (
-
       lower.includes(
         "notfounderror"
       )
-
-      ||
-
-      lower.includes(
-        "no camera"
-      )
-
     ) {
 
       tampilkanError(
@@ -1159,10 +967,6 @@ async function mulaiScanner() {
     }
 
 
-    /*
-     * ERROR LAIN
-     */
-
     else {
 
       tampilkanError(
@@ -1171,13 +975,15 @@ async function mulaiScanner() {
 
         "<br><br>" +
 
-        escapeHtml(
-          text
-        )
+        escapeHtml(text)
 
       );
 
     }
+
+
+    statusBox.textContent =
+      "Kamera gagal dibuka.";
 
   }
 
@@ -1206,9 +1012,7 @@ async function kembali() {
 
     catch(error) {
 
-      console.log(
-        error
-      );
+      console.log(error);
 
     }
 
@@ -1227,9 +1031,7 @@ async function kembali() {
    ESCAPE HTML
    ========================================================= */
 
-function escapeHtml(
-  value
-) {
+function escapeHtml(value) {
 
   return String(value)
 
@@ -1262,7 +1064,7 @@ function escapeHtml(
 
 
 /* =========================================================
-   HALAMAN LOAD
+   START SAAT HALAMAN SIAP
    ========================================================= */
 
 window.addEventListener(
@@ -1276,7 +1078,7 @@ window.addEventListener(
 
 
 /* =========================================================
-   SEBELUM HALAMAN DITUTUP
+   SAAT HALAMAN DITUTUP
    ========================================================= */
 
 window.addEventListener(
@@ -1288,8 +1090,7 @@ window.addEventListener(
       scannerAktif
     ) {
 
-      scanner
-        .stop()
+      scanner.stop()
         .catch(
           function() {}
         );
