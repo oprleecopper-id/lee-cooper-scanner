@@ -2,15 +2,15 @@
 <html lang="id">
 
 <head>
+
   <meta charset="UTF-8">
 
   <meta
     name="viewport"
-    content="width=device-width, initial-scale=1.0">
+    content="width=device-width, initial-scale=1">
 
   <title>LEE COOPER - SCANNER</title>
 
-  <!-- Library Barcode Scanner -->
   <script
     src="https://unpkg.com/html5-qrcode"
     type="text/javascript">
@@ -25,118 +25,79 @@
     body {
       margin: 0;
       padding: 15px;
-
       background: #111;
-
       color: white;
-
       font-family: Arial, sans-serif;
-
       min-height: 100vh;
     }
 
     .container {
       width: 100%;
       max-width: 600px;
-
       margin: auto;
     }
 
     h1 {
       text-align: center;
-
       margin: 10px 0 5px;
-
       font-size: 28px;
     }
 
     .subtitle {
       text-align: center;
-
       color: #aaa;
-
       margin-bottom: 20px;
     }
 
     #reader {
       width: 100%;
-
       background: #000;
-
       border-radius: 15px;
-
       overflow: hidden;
     }
 
     #status {
       text-align: center;
-
       margin-top: 15px;
-
       color: #ddd;
-
       font-size: 16px;
-    }
-
-    #result {
-      display: none;
-
-      margin-top: 20px;
-
-      padding: 20px;
-
-      background: #e8f5e9;
-
-      color: #1b5e20;
-
-      border-radius: 15px;
-
-      text-align: center;
-    }
-
-    #sku {
-      margin-top: 10px;
-
-      font-size: 28px;
-
-      font-weight: bold;
-
-      word-break: break-all;
     }
 
     #error {
       display: none;
-
       margin-top: 15px;
-
       padding: 15px;
-
       background: #ffebee;
-
       color: #b71c1c;
-
       border-radius: 12px;
-
       line-height: 1.5;
+    }
+
+    #result {
+      display: none;
+      margin-top: 15px;
+      padding: 15px;
+      background: #e8f5e9;
+      color: #1b5e20;
+      border-radius: 12px;
+      text-align: center;
+    }
+
+    #sku {
+      font-size: 25px;
+      font-weight: bold;
+      word-break: break-all;
     }
 
     button {
       width: 100%;
-
       margin-top: 15px;
-
       height: 55px;
-
       border: 0;
-
       border-radius: 12px;
-
       background: #e53935;
-
       color: white;
-
       font-size: 18px;
-
       font-weight: bold;
     }
 
@@ -150,6 +111,7 @@
 
 <div class="container">
 
+
   <h1>LEE COOPER</h1>
 
   <div class="subtitle">
@@ -157,36 +119,34 @@
   </div>
 
 
-  <!-- CAMERA -->
   <div id="reader"></div>
 
 
-  <!-- STATUS -->
   <div id="status">
-    Menyiapkan kamera...
+    Memulai kamera...
   </div>
 
 
-  <!-- HASIL -->
   <div id="result">
 
-    <div>
-      ✓ BARCODE TERBACA
-    </div>
+    ✓ BARCODE TERBACA
 
     <div id="sku"></div>
 
   </div>
 
 
-  <!-- ERROR -->
   <div id="error"></div>
 
 
-  <!-- TUTUP -->
-  <button onclick="tutup()">
+  <button
+    type="button"
+    onclick="kembali()">
+
     KEMBALI
+
   </button>
+
 
 </div>
 
@@ -194,33 +154,40 @@
 <script>
 
 
-/* =====================================================
-   VARIABLE
-   ===================================================== */
+/* =========================================================
+   VARIABEL
+   ========================================================= */
 
 let scanner = null;
 
 let sudahScan = false;
 
 
-/* =====================================================
-   RETURN URL
-   ===================================================== */
+/* =========================================================
+   RETURN URL DARI FORM
+   ========================================================= */
 
 const params =
   new URLSearchParams(
     window.location.search
   );
 
+
 const returnUrl =
   params.get("return");
 
 
-/* =====================================================
-   MULAI SCANNER
-   ===================================================== */
+/* =========================================================
+   MULAI
+   ========================================================= */
 
-function mulaiScanner() {
+async function mulaiScanner() {
+
+  const status =
+    document.getElementById(
+      "status"
+    );
+
 
   if (
     typeof Html5Qrcode ===
@@ -228,104 +195,111 @@ function mulaiScanner() {
   ) {
 
     tampilError(
-      "Library scanner tidak berhasil dimuat."
+      "Library scanner gagal dimuat. Pastikan internet aktif."
     );
 
     return;
+
   }
 
 
-  scanner =
-    new Html5Qrcode("reader");
+  try {
+
+    status.textContent =
+      "Meminta izin kamera...";
 
 
-  const config = {
-
-    fps: 10,
-
-    qrbox: {
-      width: 250,
-      height: 150
-    },
-
-    aspectRatio: 1.7777778,
-
-    formatsToSupport: [
-
-      Html5QrcodeSupportedFormats.EAN_13,
-
-      Html5QrcodeSupportedFormats.EAN_8,
-
-      Html5QrcodeSupportedFormats.CODE_128,
-
-      Html5QrcodeSupportedFormats.CODE_39,
-
-      Html5QrcodeSupportedFormats.UPC_A,
-
-      Html5QrcodeSupportedFormats.UPC_E
-
-    ]
-
-  };
-
-
-  /*
-   * LANGSUNG MINTA KAMERA BELAKANG
-   */
-
-  scanner.start(
-
-    {
-      facingMode: "environment"
-    },
-
-    config,
-
-    function(decodedText) {
-
-      barcodeBerhasil(
-        decodedText
+    scanner =
+      new Html5Qrcode(
+        "reader"
       );
 
-    },
 
-    function(errorMessage) {
+    const config = {
 
-      // Tidak perlu menampilkan
-      // error scan sementara.
+      fps: 10,
 
-    }
+      qrbox: {
+        width: 280,
+        height: 160
+      },
 
-  )
+      formatsToSupport: [
 
-  .then(function() {
+        Html5QrcodeSupportedFormats.EAN_13,
 
-    document
-      .getElementById("status")
-      .textContent =
-      "Arahkan kamera ke barcode SKU.";
+        Html5QrcodeSupportedFormats.EAN_8,
 
-  })
+        Html5QrcodeSupportedFormats.CODE_128,
 
-  .catch(function(error) {
+        Html5QrcodeSupportedFormats.CODE_39,
+
+        Html5QrcodeSupportedFormats.UPC_A,
+
+        Html5QrcodeSupportedFormats.UPC_E
+
+      ]
+
+    };
+
+
+    /*
+     * LANGSUNG MINTA KAMERA BELAKANG
+     */
+
+    await scanner.start(
+
+      {
+        facingMode: "environment"
+      },
+
+      config,
+
+      function(decodedText) {
+
+        barcodeBerhasil(
+          decodedText
+        );
+
+      },
+
+      function() {
+
+        /*
+         * Error scanning sementara
+         * tidak perlu ditampilkan.
+         */
+
+      }
+
+    );
+
+
+    status.textContent =
+      "Kamera aktif. Arahkan ke barcode SKU.";
+
+
+  }
+
+  catch (error) {
 
     console.error(error);
 
     tampilError(
-      buatPesanError(error)
+      jelaskanError(error)
     );
 
-  });
+  }
 
 }
 
 
-/* =====================================================
+/* =========================================================
    BARCODE BERHASIL
-   ===================================================== */
+   ========================================================= */
 
-function barcodeBerhasil(
-  barcode
+async function barcodeBerhasil(
+  decodedText
 ) {
 
   if (sudahScan) {
@@ -338,49 +312,60 @@ function barcodeBerhasil(
 
   const sku =
     String(
-      barcode
+      decodedText || ""
     ).trim();
 
 
+  if (!sku) {
+
+    sudahScan = false;
+
+    return;
+
+  }
+
+
   document
-    .getElementById("sku")
+    .getElementById(
+      "sku"
+    )
     .textContent =
     sku;
 
 
   document
-    .getElementById("result")
+    .getElementById(
+      "result"
+    )
     .style.display =
     "block";
 
 
   document
-    .getElementById("status")
+    .getElementById(
+      "status"
+    )
     .textContent =
     "Barcode berhasil dibaca.";
 
 
   /*
-   * STOP KAMERA
+   * MATIKAN KAMERA
    */
 
   if (scanner) {
 
-    scanner.stop()
+    try {
 
-      .then(function() {
+      await scanner.stop();
 
-        console.log(
-          "Scanner stopped."
-        );
+    }
 
-      })
+    catch (error) {
 
-      .catch(function(error) {
+      console.log(error);
 
-        console.log(error);
-
-      });
+    }
 
   }
 
@@ -391,14 +376,14 @@ function barcodeBerhasil(
 
   if (returnUrl) {
 
+    const separator =
+      returnUrl.includes("?")
+        ? "&"
+        : "?";
+
+
     setTimeout(
       function() {
-
-        const separator =
-          returnUrl.includes("?")
-            ? "&"
-            : "?";
-
 
         window.location.href =
           returnUrl +
@@ -409,7 +394,7 @@ function barcodeBerhasil(
           );
 
       },
-      1000
+      500
     );
 
   }
@@ -417,41 +402,39 @@ function barcodeBerhasil(
 }
 
 
-/* =====================================================
+/* =========================================================
    ERROR
-   ===================================================== */
+   ========================================================= */
 
 function tampilError(
-  pesan
+  message
 ) {
 
-  const error =
+  const box =
     document.getElementById(
       "error"
     );
 
 
-  error.innerHTML =
-    pesan;
+  box.innerHTML =
+    message;
 
 
-  error.style.display =
+  box.style.display =
     "block";
 
 
   document
-    .getElementById("status")
+    .getElementById(
+      "status"
+    )
     .textContent =
     "Kamera tidak dapat digunakan.";
 
 }
 
 
-/* =====================================================
-   PESAN ERROR
-   ===================================================== */
-
-function buatPesanError(
+function jelaskanError(
   error
 ) {
 
@@ -467,7 +450,7 @@ function buatPesanError(
 
   if (
     lower.includes(
-      "notallowed"
+      "notallowederror"
     ) ||
     lower.includes(
       "permission"
@@ -479,13 +462,12 @@ function buatPesanError(
 
     return (
 
-      "<b>AKSES KAMERA DITOLAK</b>" +
+      "<b>IZIN KAMERA DITOLAK</b>" +
 
       "<br><br>" +
 
-      "Buka pengaturan Chrome dan pastikan " +
-
-      "izin Kamera untuk situs ini diizinkan."
+      "Buka pengaturan situs di Chrome → " +
+      "Kamera → Izinkan → kemudian refresh halaman."
 
     );
 
@@ -494,7 +476,7 @@ function buatPesanError(
 
   if (
     lower.includes(
-      "notfound"
+      "notfounderror"
     )
   ) {
 
@@ -504,9 +486,8 @@ function buatPesanError(
 
       "<br><br>" +
 
-      "Pastikan HP memiliki kamera dan " +
-
-      "kamera tidak sedang digunakan aplikasi lain."
+      "Pastikan kamera HP tersedia dan tidak " +
+      "sedang digunakan aplikasi lain."
 
     );
 
@@ -515,7 +496,7 @@ function buatPesanError(
 
   if (
     lower.includes(
-      "notreadable"
+      "notreadableerror"
     )
   ) {
 
@@ -525,11 +506,7 @@ function buatPesanError(
 
       "<br><br>" +
 
-      "Tutup aplikasi Kamera, WhatsApp, " +
-
-      "Instagram, Google Lens, atau aplikasi " +
-
-      "lain yang sedang menggunakan kamera."
+      "Tutup aplikasi lain yang menggunakan kamera."
 
     );
 
@@ -542,47 +519,18 @@ function buatPesanError(
 
     "<br><br>" +
 
-    "Error: " +
-
-    text
+    escapeHtml(
+      text
+    )
 
   );
 
 }
 
 
-/* =====================================================
-   TUTUP
-   ===================================================== */
-
-function tutup() {
-
-  if (scanner) {
-
-    scanner.stop()
-
-      .catch(function() {})
-
-      .finally(function() {
-
-        kembali();
-
-      });
-
-  }
-
-  else {
-
-    kembali();
-
-  }
-
-}
-
-
-/* =====================================================
-   KEMBALI KE FORM
-   ===================================================== */
+/* =========================================================
+   KEMBALI
+   ========================================================= */
 
 function kembali() {
 
@@ -596,9 +544,47 @@ function kembali() {
 }
 
 
-/* =====================================================
+/* =========================================================
+   ESCAPE
+   ========================================================= */
+
+function escapeHtml(
+  value
+) {
+
+  return String(value)
+
+    .replace(
+      /&/g,
+      "&amp;"
+    )
+
+    .replace(
+      /</g,
+      "&lt;"
+    )
+
+    .replace(
+      />/g,
+      "&gt;"
+    )
+
+    .replace(
+      /"/g,
+      "&quot;"
+    )
+
+    .replace(
+      /'/g,
+      "&#039;"
+    );
+
+}
+
+
+/* =========================================================
    START
-   ===================================================== */
+   ========================================================= */
 
 window.addEventListener(
   "load",
