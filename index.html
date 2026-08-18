@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id">
+<html>
 
 <head>
 
@@ -7,7 +7,7 @@
 
   <meta
     name="viewport"
-    content="width=device-width, initial-scale=1.0">
+    content="width=device-width, initial-scale=1">
 
   <title>LEE COOPER - SCANNER</title>
 
@@ -23,75 +23,248 @@
     }
 
     body {
+
       margin: 0;
-      padding: 15px;
+
+      font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+      background: #f5f5f5;
+
       min-height: 100vh;
-      background: #111;
-      color: white;
-      font-family: Arial, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+
+      padding: 15px;
+
     }
 
     .container {
+
       width: 100%;
+
       max-width: 600px;
-      text-align: center;
+
+      margin: auto;
+
+      background: white;
+
+      border-radius: 20px;
+
+      padding: 25px;
+
+      box-shadow:
+        0 10px 30px
+        rgba(0,0,0,.10);
+
     }
 
     h1 {
+
+      text-align: center;
+
       margin: 0;
+
       font-size: 30px;
+
       font-weight: 800;
+
     }
 
     .subtitle {
-      margin-top: 8px;
-      color: #ccc;
+
+      text-align: center;
+
+      margin-top: 7px;
+
+      color: #666;
+
+    }
+
+    .user-box {
+
+      margin-top: 20px;
+
+      padding: 18px;
+
+      background: #edf3ff;
+
+      border-radius: 14px;
+
+    }
+
+    .user-label {
+
+      font-size: 13px;
+
+      color: #666;
+
+    }
+
+    .user {
+
+      margin-top: 5px;
+
+      font-size: 25px;
+
+      font-weight: 800;
+
+    }
+
+    label {
+
+      display: block;
+
+      margin-top: 20px;
+
+      margin-bottom: 8px;
+
+      font-weight: 700;
+
+    }
+
+    input {
+
+      width: 100%;
+
+      height: 55px;
+
+      border: 1px solid #ccc;
+
+      border-radius: 10px;
+
+      padding: 0 15px;
+
       font-size: 18px;
+
+    }
+
+    button {
+
+      width: 100%;
+
+      height: 55px;
+
+      border: none;
+
+      border-radius: 10px;
+
+      font-size: 18px;
+
+      font-weight: 800;
+
+      cursor: pointer;
+
+    }
+
+    #scanButton {
+
+      margin-top: 12px;
+
+      background: #1976d2;
+
+      color: white;
+
+    }
+
+    #saveButton {
+
+      margin-top: 20px;
+
+      background: #111;
+
+      color: white;
+
+    }
+
+    button:disabled {
+
+      background: #999 !important;
+
+      cursor: not-allowed;
+
     }
 
     #reader {
+
+      margin-top: 15px;
+
       width: 100%;
-      margin-top: 25px;
-      background: black;
-      border-radius: 18px;
+
       overflow: hidden;
-    }
 
-    #status {
-      margin-top: 15px;
-      padding: 15px;
       border-radius: 12px;
-      background: #222;
-      color: #ddd;
-      font-size: 16px;
-      line-height: 1.5;
+
+      background: black;
+
     }
 
-    #error {
+    #scannerArea {
+
       display: none;
-      margin-top: 15px;
-      padding: 15px;
-      border-radius: 12px;
-      background: #5a1111;
-      color: #fff;
-      text-align: left;
-      line-height: 1.5;
+
+      margin-top: 20px;
+
     }
 
-    .back {
-      display: block;
+    .status {
+
       margin-top: 15px;
-      width: 100%;
-      height: 55px;
-      line-height: 55px;
-      border-radius: 12px;
-      background: #444;
+
+      padding: 15px;
+
+      border-radius: 10px;
+
+      background: #f1f1f1;
+
+      line-height: 1.5;
+
+    }
+
+    .success {
+
+      background: #e2f7e9;
+
+      color: #137333;
+
+    }
+
+    .error {
+
+      background: #fde2e2;
+
+      color: #b00020;
+
+    }
+
+    .warning {
+
+      background: #fff4d6;
+
+      color: #8a5a00;
+
+    }
+
+    .close {
+
+      margin-top: 10px;
+
+      background: #e53935;
+
       color: white;
-      text-decoration: none;
-      font-weight: 800;
+
+    }
+
+    .small {
+
+      font-size: 13px;
+
+      color: #777;
+
+      margin-top: 8px;
+
+      line-height: 1.5;
+
     }
 
   </style>
@@ -101,34 +274,148 @@
 
 <body>
 
+
 <div class="container">
 
-  <h1>LEE COOPER</h1>
+
+  <h1>
+    LEE COOPER
+  </h1>
+
 
   <div class="subtitle">
     SCANNER BARCODE SKU
   </div>
 
 
-  <div id="reader"></div>
+  <!-- USER -->
 
+  <div class="user-box">
 
-  <div id="status">
-    Menyiapkan kamera...
+    <div class="user-label">
+      SALES ASSISTANT
+    </div>
+
+    <div
+      class="user"
+      id="userDisplay">
+
+      Memuat...
+
+    </div>
+
   </div>
 
 
-  <div id="error"></div>
+  <!-- TANGGAL -->
+
+  <label>
+    Tanggal Transaksi
+  </label>
+
+  <input
+    type="date"
+    id="tanggal">
 
 
-  <a
-    id="back"
-    class="back"
-    href="#">
+  <!-- SKU -->
 
-    KEMBALI
+  <label>
+    SKU
+  </label>
 
-  </a>
+  <input
+    type="text"
+    id="sku"
+    placeholder="Scan atau ketik SKU..."
+    autocomplete="off">
+
+
+  <button
+    type="button"
+    id="scanButton"
+    onclick="mulaiScanner()">
+
+    📷 SCAN SKU
+
+  </button>
+
+
+  <!-- SCANNER -->
+
+  <div id="scannerArea">
+
+    <div id="reader"></div>
+
+    <button
+      type="button"
+      class="close"
+      onclick="stopScanner()">
+
+      TUTUP KAMERA
+
+    </button>
+
+  </div>
+
+
+  <!-- QTY -->
+
+  <label>
+    QTY
+  </label>
+
+  <input
+    type="number"
+    id="qty"
+    value="1"
+    min="1">
+
+
+  <!-- DISCOUNT -->
+
+  <label>
+    Discount
+  </label>
+
+  <input
+    type="number"
+    id="diskon"
+    min="0"
+    placeholder="Opsional">
+
+
+  <!-- SAVE -->
+
+  <button
+    type="button"
+    id="saveButton"
+    onclick="simpanData()">
+
+    SIMPAN
+
+  </button>
+
+
+  <!-- STATUS -->
+
+  <div
+    id="status"
+    class="status">
+
+    Siap digunakan.
+
+  </div>
+
+
+  <div class="small">
+
+    Hanya SKU yang terdapat di
+    <b>Rekap Stok kolom A</b>
+    yang dapat disimpan.
+
+  </div>
+
 
 </div>
 
@@ -137,7 +424,7 @@
 
 
 /* =========================================================
-   KONFIGURASI
+   KONFIGURASI APPS SCRIPT
    ========================================================= */
 
 const APPS_SCRIPT_URL =
@@ -145,7 +432,7 @@ const APPS_SCRIPT_URL =
 
 
 /* =========================================================
-   USER DARI URL
+   USER
    ========================================================= */
 
 const params =
@@ -154,7 +441,7 @@ const params =
   );
 
 
-const user =
+let USER =
   String(
     params.get("user") || ""
   )
@@ -162,81 +449,264 @@ const user =
   .toUpperCase();
 
 
-/* =========================================================
-   ELEMEN
-   ========================================================= */
+const DAFTAR_SA = [
 
-const statusBox =
-  document.getElementById(
-    "status"
-  );
+  "ZAINAL",
+  "CHIKA",
+  "RETNO"
 
-const errorBox =
-  document.getElementById(
-    "error"
-  );
+];
 
 
-/* =========================================================
-   LINK KEMBALI
-   ========================================================= */
+let scanner =
+  null;
 
-document
-  .getElementById(
-    "back"
-  )
-  .href =
-  APPS_SCRIPT_URL +
-  "?user=" +
-  encodeURIComponent(
-    user
-  );
+
+let scannerAktif =
+  false;
 
 
 /* =========================================================
-   VALIDASI USER
+   TANGGAL
    ========================================================= */
 
-if (!user) {
+function setTanggal() {
 
-  tampilkanError(
-    "Sales Assistant tidak ditemukan."
-  );
+  const input =
+    document.getElementById(
+      "tanggal"
+    );
+
+
+  const now =
+    new Date();
+
+
+  input.value =
+
+    now.getFullYear() +
+
+    "-" +
+
+    String(
+      now.getMonth() + 1
+    ).padStart(2,"0") +
+
+    "-" +
+
+    String(
+      now.getDate()
+    ).padStart(2,"0");
 
 }
 
 
 /* =========================================================
-   SCANNER
+   STATUS
    ========================================================= */
 
-let scanner = null;
+function status(
+  text,
+  type
+) {
 
-let sudahScan = false;
+  const box =
+    document.getElementById(
+      "status"
+    );
+
+
+  box.innerHTML =
+    text;
+
+
+  box.className =
+    "status";
+
+
+  if (type) {
+
+    box.classList.add(
+      type
+    );
+
+  }
+
+}
 
 
 /* =========================================================
-   MULAI
+   INIT
    ========================================================= */
 
-async function mulaiScanner() {
+document.addEventListener(
+  "DOMContentLoaded",
+  function() {
 
-  try {
+
+    setTanggal();
+
+
+    const userDisplay =
+      document.getElementById(
+        "userDisplay"
+      );
+
 
     if (
-      typeof Html5Qrcode ===
-      "undefined"
+      !DAFTAR_SA.includes(USER)
     ) {
 
-      throw new Error(
-        "Library scanner gagal dimuat. Pastikan internet aktif."
+      userDisplay.textContent =
+        "SA TIDAK VALID";
+
+
+      status(
+
+        "<b>Link Sales Assistant tidak valid.</b>" +
+
+        "<br><br>" +
+
+        "Gunakan contoh:" +
+
+        "<br>" +
+
+        "<b>?user=RETNO</b>",
+
+        "error"
+
       );
+
+
+      document
+        .getElementById(
+          "scanButton"
+        )
+        .disabled = true;
+
+
+      document
+        .getElementById(
+          "saveButton"
+        )
+        .disabled = true;
+
+
+      return;
 
     }
 
 
-    statusBox.innerHTML =
-      "📷 Meminta izin kamera...";
+    userDisplay.textContent =
+      USER;
+
+
+    document
+      .getElementById(
+        "sku"
+      )
+      .focus();
+
+  }
+
+);
+
+
+/* =========================================================
+   MULAI SCANNER
+   ========================================================= */
+
+async function mulaiScanner() {
+
+
+  if (
+    !DAFTAR_SA.includes(USER)
+  ) {
+
+    status(
+      "Sales Assistant tidak valid.",
+      "error"
+    );
+
+    return;
+
+  }
+
+
+  if (
+    !window.isSecureContext
+  ) {
+
+    status(
+
+      "<b>HTTPS diperlukan.</b>" +
+
+      "<br><br>" +
+
+      "Buka scanner melalui alamat GitHub Pages HTTPS.",
+
+      "error"
+
+    );
+
+    return;
+
+  }
+
+
+  if (
+    typeof Html5Qrcode ===
+    "undefined"
+  ) {
+
+    status(
+
+      "Library scanner belum dimuat. " +
+      "Pastikan internet aktif lalu refresh.",
+
+      "error"
+
+    );
+
+    return;
+
+  }
+
+
+  const area =
+    document.getElementById(
+      "scannerArea"
+    );
+
+
+  area.style.display =
+    "block";
+
+
+  const reader =
+    document.getElementById(
+      "reader"
+    );
+
+
+  reader.innerHTML =
+    "";
+
+
+  document
+    .getElementById(
+      "scanButton"
+    )
+    .disabled = true;
+
+
+  status(
+    "Meminta akses kamera...",
+    "warning"
+  );
+
+
+  try {
 
 
     scanner =
@@ -245,96 +715,35 @@ async function mulaiScanner() {
       );
 
 
-    const cameras =
-      await Html5Qrcode.getCameras();
-
-
-    if (
-      !cameras ||
-      cameras.length === 0
-    ) {
-
-      throw new Error(
-        "Kamera tidak ditemukan."
-      );
-
-    }
-
-
-    /* =====================================================
-       PILIH KAMERA BELAKANG
-       ===================================================== */
-
-    let cameraId =
-      cameras[0].id;
-
-
-    const belakang =
-      cameras.find(
-        function(camera) {
-
-          const label =
-            String(
-              camera.label || ""
-            )
-            .toLowerCase();
-
-
-          return (
-            label.includes("back") ||
-            label.includes("rear") ||
-            label.includes("environment") ||
-            label.includes("belakang")
-          );
-
-        }
-      );
-
-
-    if (belakang) {
-
-      cameraId =
-        belakang.id;
-
-    }
-
-
-    statusBox.innerHTML =
-      "✓ Kamera aktif.<br>Arahkan kamera ke barcode SKU.";
-
-
-    /* =====================================================
-       KONFIGURASI
-       ===================================================== */
-
     const config = {
 
       fps: 10,
 
-      qrbox:
-        function(
-          width,
-          height
-        ) {
+      qrbox: function(
+        width,
+        height
+      ) {
 
-          const size =
+        const size =
+          Math.floor(
             Math.min(
               width,
               height
-            ) * 0.70;
+            ) * 0.70
+          );
 
 
-          return {
+        return {
 
-            width:
-              Math.floor(size),
+          width:
+            size,
 
-            height:
-              Math.floor(size)
+          height:
+            size
 
-          };
+        };
 
-        },
+      },
 
       formatsToSupport: [
 
@@ -355,13 +764,12 @@ async function mulaiScanner() {
     };
 
 
-    /* =====================================================
-       START
-       ===================================================== */
-
     await scanner.start(
 
-      cameraId,
+      {
+        facingMode:
+          "environment"
+      },
 
       config,
 
@@ -373,11 +781,26 @@ async function mulaiScanner() {
 
       },
 
-      function(errorMessage) {
+      function() {
 
-        // normal saat belum menemukan barcode
+        // scan belum berhasil
+        // normal
 
       }
+
+    );
+
+
+    scannerAktif =
+      true;
+
+
+    status(
+
+      "Kamera aktif. " +
+      "Arahkan kamera ke barcode SKU.",
+
+      "success"
 
     );
 
@@ -386,14 +809,52 @@ async function mulaiScanner() {
 
   catch(error) {
 
+
     console.error(
       error
     );
 
 
-    tampilkanError(
-      jelaskanError(error)
+    scannerAktif =
+      false;
+
+
+    status(
+
+      "<b>Kamera gagal dibuka.</b>" +
+
+      "<br><br>" +
+
+      "<b>Kamera tidak dapat digunakan.</b>" +
+
+      "<br><br>" +
+
+      "Pastikan izin kamera GitHub Pages " +
+      "sudah diizinkan di Chrome." +
+
+      "<br><br>" +
+
+      "Detail: " +
+
+      escapeHtml(
+        error.message ||
+        String(error)
+      ),
+
+      "error"
+
     );
+
+
+    area.style.display =
+      "none";
+
+
+    document
+      .getElementById(
+        "scanButton"
+      )
+      .disabled = false;
 
   }
 
@@ -408,15 +869,13 @@ async function barcodeBerhasil(
   decodedText
 ) {
 
-  if (sudahScan) {
-    return;
-  }
-
 
   const sku =
     String(
       decodedText || ""
-    ).trim();
+    )
+    .trim()
+    .toUpperCase();
 
 
   if (!sku) {
@@ -424,21 +883,189 @@ async function barcodeBerhasil(
   }
 
 
-  sudahScan =
-    true;
+  /* =======================================================
+     STOP CAMERA
+     ======================================================= */
+
+  await stopScanner();
 
 
-  statusBox.innerHTML =
-    "✓ Barcode terbaca.<br>SKU: <b>" +
+  /* =======================================================
+     MASUKKAN SKU
+     ======================================================= */
+
+  document
+    .getElementById(
+      "sku"
+    )
+    .value =
+    sku;
+
+
+  status(
+
+    "Barcode terbaca: <b>" +
     escapeHtml(sku) +
-    "</b><br><br>Mengirim ke form...";
+    "</b><br><br>" +
+    "Memeriksa SKU di Rekap Stok...",
+
+    "warning"
+
+  );
 
 
-  /* =====================================================
-     STOP KAMERA
-     ===================================================== */
+  /* =======================================================
+     CEK SKU KE APPS SCRIPT
+     ======================================================= */
 
-  if (scanner) {
+  try {
+
+
+    const url =
+      APPS_SCRIPT_URL +
+      "?action=cekSKU" +
+      "&user=" +
+      encodeURIComponent(USER) +
+      "&sku=" +
+      encodeURIComponent(sku);
+
+
+    const response =
+      await fetch(
+        url,
+        {
+          method: "GET"
+        }
+      );
+
+
+    const hasil =
+      await response.json();
+
+
+    if (
+      !hasil.exists
+    ) {
+
+
+      status(
+
+        "<b>❌ SKU TIDAK DITEMUKAN</b>" +
+
+        "<br><br>" +
+
+        "SKU: <b>" +
+
+        escapeHtml(sku) +
+
+        "</b>" +
+
+        "<br><br>" +
+
+        "SKU ini tidak terdapat di " +
+
+        "<b>Rekap Stok kolom A</b>." +
+
+        "<br><br>" +
+
+        "Data tidak dapat disimpan.",
+
+        "error"
+
+      );
+
+
+      document
+        .getElementById(
+          "sku"
+        )
+        .focus();
+
+
+      return;
+
+    }
+
+
+    /* =====================================================
+       SKU VALID
+       ===================================================== */
+
+    status(
+
+      "<b>✓ SKU VALID</b>" +
+
+      "<br><br>" +
+
+      "SKU <b>" +
+
+      escapeHtml(sku) +
+
+      "</b> ditemukan di Rekap Stok." +
+
+      "<br><br>" +
+
+      "Silakan isi QTY lalu tekan SIMPAN.",
+
+      "success"
+
+    );
+
+
+    document
+      .getElementById(
+        "qty"
+      )
+      .focus();
+
+
+  }
+
+  catch(error) {
+
+
+    console.error(
+      error
+    );
+
+
+    status(
+
+      "<b>Gagal memeriksa SKU.</b>" +
+
+      "<br><br>" +
+
+      "Pastikan Apps Script sudah di-deploy " +
+
+      "sebagai Web App." +
+
+      "<br><br>" +
+
+      escapeHtml(
+        error.message ||
+        String(error)
+      ),
+
+      "error"
+
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   STOP SCANNER
+   ========================================================= */
+
+async function stopScanner() {
+
+
+  if (
+    scanner &&
+    scannerAktif
+  ) {
 
     try {
 
@@ -457,135 +1084,390 @@ async function barcodeBerhasil(
   }
 
 
-  /* =====================================================
-     REDIRECT KE APPS SCRIPT
-     ===================================================== */
+  scannerAktif =
+    false;
 
-  const url =
-    APPS_SCRIPT_URL +
-    "?user=" +
-    encodeURIComponent(
-      user
-    ) +
-    "&sku=" +
-    encodeURIComponent(
-      sku
+
+  scanner =
+    null;
+
+
+  const area =
+    document.getElementById(
+      "scannerArea"
     );
 
 
-  setTimeout(
-    function() {
+  area.style.display =
+    "none";
 
-      window.location.href =
-        url;
 
-    },
-    500
-  );
+  document
+    .getElementById(
+      "scanButton"
+    )
+    .disabled = false;
 
 }
 
 
 /* =========================================================
-   ERROR
+   SIMPAN DATA
    ========================================================= */
 
-function tampilkanError(
-  message
-) {
-
-  errorBox.style.display =
-    "block";
-
-  errorBox.innerHTML =
-    message;
-
-  statusBox.innerHTML =
-    "Kamera gagal dibuka.";
-
-}
-
-
-/* =========================================================
-   JELASKAN ERROR
-   ========================================================= */
-
-function jelaskanError(
-  error
-) {
-
-  const text =
-    String(
-      error || ""
-    );
-
-
-  const lower =
-    text.toLowerCase();
+async function simpanData() {
 
 
   if (
-    lower.includes(
-      "permission"
-    ) ||
-    lower.includes(
-      "notallowed"
-    ) ||
-    lower.includes(
-      "denied"
-    )
+    !DAFTAR_SA.includes(USER)
   ) {
 
-    return (
-
-      "<b>IZIN KAMERA DITOLAK</b>" +
-
-      "<br><br>" +
-
-      "Buka pengaturan situs di Chrome → " +
-      "Kamera → Izinkan → kemudian refresh halaman."
-
+    status(
+      "Sales Assistant tidak valid.",
+      "error"
     );
+
+    return;
+
+  }
+
+
+  const tanggal =
+    document
+      .getElementById(
+        "tanggal"
+      )
+      .value;
+
+
+  const sku =
+    document
+      .getElementById(
+        "sku"
+      )
+      .value
+      .trim()
+      .toUpperCase();
+
+
+  const qty =
+    Number(
+      document
+        .getElementById(
+          "qty"
+        )
+        .value
+    );
+
+
+  const diskonInput =
+    document
+      .getElementById(
+        "diskon"
+      )
+      .value;
+
+
+  const diskon =
+    diskonInput === ""
+      ? 0
+      : Number(
+          diskonInput
+        );
+
+
+  /* =======================================================
+     VALIDASI
+     ======================================================= */
+
+  if (!tanggal) {
+
+    status(
+      "Tanggal belum diisi.",
+      "error"
+    );
+
+    return;
+
+  }
+
+
+  if (!sku) {
+
+    status(
+      "SKU belum diisi.",
+      "error"
+    );
+
+    return;
 
   }
 
 
   if (
-    lower.includes(
-      "notfound"
-    ) ||
-    lower.includes(
-      "camera not found"
-    )
+    !qty ||
+    qty <= 0
   ) {
 
-    return (
-
-      "<b>KAMERA TIDAK DITEMUKAN</b>" +
-
-      "<br><br>" +
-
-      "Pastikan HP memiliki kamera dan kamera " +
-      "tidak sedang digunakan aplikasi lain."
-
+    status(
+      "QTY harus lebih besar dari 0.",
+      "error"
     );
+
+    return;
 
   }
 
 
-  return (
+  if (
+    isNaN(diskon) ||
+    diskon < 0
+  ) {
 
-    "<b>Kamera tidak dapat digunakan.</b>" +
+    status(
+      "Discount tidak valid.",
+      "error"
+    );
 
-    "<br><br>" +
+    return;
 
-    "Detail: " +
+  }
 
-    escapeHtml(
-      text
-    )
 
+  const button =
+    document.getElementById(
+      "saveButton"
+    );
+
+
+  button.disabled =
+    true;
+
+
+  button.textContent =
+    "MENYIMPAN...";
+
+
+  status(
+    "Memeriksa SKU dan menyimpan data...",
+    "warning"
   );
+
+
+  try {
+
+
+    /* =====================================================
+       KIRIM KE APPS SCRIPT
+       ===================================================== */
+
+    const url =
+      APPS_SCRIPT_URL +
+      "?action=simpanInput" +
+      "&user=" +
+      encodeURIComponent(USER) +
+      "&tanggal=" +
+      encodeURIComponent(tanggal) +
+      "&sku=" +
+      encodeURIComponent(sku) +
+      "&qty=" +
+      encodeURIComponent(qty) +
+      "&diskon=" +
+      encodeURIComponent(diskon);
+
+
+    const response =
+      await fetch(
+        url,
+        {
+          method: "GET"
+        }
+      );
+
+
+    const hasil =
+      await response.json();
+
+
+    /* =====================================================
+       SKU TIDAK VALID
+       ===================================================== */
+
+    if (
+      hasil.invalidSKU
+    ) {
+
+      status(
+
+        "<b>❌ DATA DITOLAK</b>" +
+
+        "<br><br>" +
+
+        escapeHtml(
+          hasil.message
+        ),
+
+        "error"
+
+      );
+
+
+      return;
+
+    }
+
+
+    /* =====================================================
+       BERHASIL
+       ===================================================== */
+
+    if (
+      hasil.success
+    ) {
+
+
+      status(
+
+        "<b>✓ DATA BERHASIL DISIMPAN</b>" +
+
+        "<br><br>" +
+
+        "SA: <b>" +
+
+        escapeHtml(
+          hasil.user
+        ) +
+
+        "</b>" +
+
+        "<br>" +
+
+        "Tanggal: <b>" +
+
+        escapeHtml(
+          hasil.tanggal
+        ) +
+
+        "</b>" +
+
+        "<br>" +
+
+        "SKU: <b>" +
+
+        escapeHtml(
+          hasil.sku
+        ) +
+
+        "</b>" +
+
+        "<br>" +
+
+        "QTY: <b>" +
+
+        hasil.qty +
+
+        "</b>",
+
+        "success"
+
+      );
+
+
+      /* ===================================================
+         RESET
+         =================================================== */
+
+      document
+        .getElementById(
+          "sku"
+        )
+        .value =
+        "";
+
+
+      document
+        .getElementById(
+          "qty"
+        )
+        .value =
+        "1";
+
+
+      document
+        .getElementById(
+          "diskon"
+        )
+        .value =
+        "";
+
+
+      document
+        .getElementById(
+          "sku"
+        )
+        .focus();
+
+
+    }
+
+    else {
+
+
+      status(
+
+        "<b>❌ GAGAL MENYIMPAN</b>" +
+
+        "<br><br>" +
+
+        escapeHtml(
+          hasil.message ||
+          "Data gagal disimpan."
+        ),
+
+        "error"
+
+      );
+
+    }
+
+  }
+
+  catch(error) {
+
+
+    console.error(
+      error
+    );
+
+
+    status(
+
+      "<b>Terjadi kesalahan.</b>" +
+
+      "<br><br>" +
+
+      escapeHtml(
+        error.message ||
+        String(error)
+      ),
+
+      "error"
+
+    );
+
+  }
+
+  finally {
+
+
+    button.disabled =
+      false;
+
+
+    button.textContent =
+      "SIMPAN";
+
+  }
 
 }
 
@@ -598,45 +1480,66 @@ function escapeHtml(
   value
 ) {
 
-  return String(value)
+  return String(
+    value
+  )
 
-    .replace(
-      /&/g,
-      "&amp;"
-    )
+  .replace(
+    /&/g,
+    "&amp;"
+  )
 
-    .replace(
-      /</g,
-      "&lt;"
-    )
+  .replace(
+    /</g,
+    "&lt;"
+  )
 
-    .replace(
-      />/g,
-      "&gt;"
-    )
+  .replace(
+    />/g,
+    "&gt;"
+  )
 
-    .replace(
-      /"/g,
-      "&quot;"
-    )
+  .replace(
+    /"/g,
+    "&quot;"
+  )
 
-    .replace(
-      /'/g,
-      "&#039;"
-    );
+  .replace(
+    /'/g,
+    "&#039;"
+  );
 
 }
 
 
 /* =========================================================
-   JALANKAN
+   ENTER SKU
    ========================================================= */
 
-if (user) {
+document.addEventListener(
+  "keydown",
+  function(event) {
 
-  mulaiScanner();
 
-}
+    if (
+      event.key === "Enter" &&
+      document.activeElement &&
+      document.activeElement.id === "sku"
+    ) {
+
+      event.preventDefault();
+
+
+      document
+        .getElementById(
+          "qty"
+        )
+        .focus();
+
+    }
+
+  }
+);
 
 </script>
 
