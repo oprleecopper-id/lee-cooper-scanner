@@ -388,30 +388,254 @@ function kirimStatusSiap() {
    BARCODE BERHASIL
    ========================================================= */
 
-async function barcodeBerhasil(
-  decodedText
-) {
+async function barcodeBerhasil(decodedText) {
 
-  if (
-    barcodeSudahTerbaca
-  ) {
-
+  if (barcodeSudahTerbaca) {
     return;
-
   }
-
 
   const sku =
-    String(
-      decodedText || ""
-    ).trim();
-
+    String(decodedText || "").trim();
 
   if (!sku) {
+    return;
+  }
+
+  /*
+   * Jangan langsung kirim SKU ke Form.
+   *
+   * SKU harus diverifikasi oleh Apps Script
+   * terlebih dahulu.
+   */
+
+  barcodeSudahTerbaca = true;
+
+  statusBox.textContent =
+    "Memeriksa SKU...";
+
+  errorBox.style.display = "none";
+  successBox.style.display = "none";
+
+
+  /*
+   * Ambil URL halaman Apps Script
+   * dari parameter ?return=
+   */
+
+  const params =
+    new URLSearchParams(
+      window.location.search
+    );
+
+  const returnUrl =
+    params.get("return");
+
+
+  /*
+   * Jika scanner dibuka tanpa return URL
+   */
+
+  if (!returnUrl) {
+
+    barcodeSudahTerbaca = false;
+
+    tampilkanError(
+
+      "<b>LINK FORM TIDAK DITEMUKAN</b>" +
+
+      "<br><br>" +
+
+      "Scanner harus dibuka dari Form Daily Stock."
+
+    );
 
     return;
 
   }
+
+
+  /*
+   * Kirim barcode ke Apps Script
+   * untuk pengecekan SKU.
+   *
+   * Apps Script yang menentukan:
+   * ADA atau TIDAK ADA di Rekap Stok.
+   */
+
+  try {
+
+    const separator =
+      returnUrl.includes("?")
+        ? "&"
+        : "?";
+
+    const url =
+      returnUrl +
+      separator +
+      "checkSku=" +
+      encodeURIComponent(sku);
+
+
+    const response =
+      await fetch(url, {
+        method: "GET",
+        cache: "no-store"
+      });
+
+
+    if (!response.ok) {
+
+      throw new Error(
+        "Server tidak dapat dihubungi."
+      );
+
+    }
+
+
+    const hasil =
+      await response.json();
+
+
+    /*
+     * SKU TIDAK ADA DI REKAP STOK
+     */
+
+    if (
+      !hasil ||
+      hasil.valid !== true
+    ) {
+
+      barcodeSudahTerbaca = false;
+
+      successBox.style.display =
+        "none";
+
+      tampilkanError(
+
+        "<b>✕ SKU DITOLAK</b>" +
+
+        "<br><br>" +
+
+        "SKU <b>" +
+        escapeHtml(sku) +
+        "</b> tidak ditemukan " +
+
+        "di <b>REKAP STOK</b>." +
+
+        "<br><br>" +
+
+        "Barcode tidak dikirim ke Form."
+
+      );
+
+      statusBox.textContent =
+        "Silakan scan SKU yang terdaftar.";
+
+      return;
+
+    }
+
+
+    /*
+     * SKU VALID
+     */
+
+    statusBox.textContent =
+      "SKU valid. Mengirim ke Form...";
+
+    successBox.innerHTML =
+      "✓ SKU VALID<br><br>" +
+      "<b>" +
+      escapeHtml(sku) +
+      "</b>";
+
+    successBox.style.display =
+      "block";
+
+
+    /*
+     * KIRIM SKU KE TAB FORM
+     */
+
+    if (
+      window.opener &&
+      !window.opener.closed
+    ) {
+
+      window.opener.postMessage(
+
+        {
+          type:
+            "LEE_COOPER_BARCODE",
+
+          sku:
+            sku
+        },
+
+        "*"
+
+      );
+
+    }
+
+
+    /*
+     * STOP CAMERA
+     */
+
+    await stopScanner();
+
+
+    statusBox.textContent =
+      "SKU berhasil dikirim ke Form.";
+
+
+    /*
+     * Tutup scanner
+     */
+
+    setTimeout(
+      function() {
+
+        try {
+
+          window.close();
+
+        }
+        catch(error) {
+
+          console.log(error);
+
+        }
+
+      },
+      700
+    );
+
+
+  }
+  catch(error) {
+
+    console.error(error);
+
+    barcodeSudahTerbaca = false;
+
+    tampilkanError(
+
+      "<b>GAGAL MEMERIKSA SKU</b>" +
+
+      "<br><br>" +
+
+      escapeHtml(
+        error.message ||
+        String(error)
+      )
+
+    );
+
+  }
+
+}
 
 
   barcodeSudahTerbaca =
