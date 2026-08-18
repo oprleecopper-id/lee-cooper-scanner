@@ -25,13 +25,19 @@
       box-sizing: border-box;
     }
 
+
     body {
 
       margin: 0;
 
       min-height: 100vh;
 
-      background: #111;
+      background:
+        linear-gradient(
+          135deg,
+          #090909,
+          #1d1d1d
+        );
 
       color: white;
 
@@ -50,6 +56,7 @@
 
     }
 
+
     .container {
 
       width: 100%;
@@ -58,67 +65,171 @@
 
       background: #181818;
 
-      border-radius: 20px;
+      border-radius: 22px;
 
       padding: 20px;
 
       box-shadow:
-        0 10px 40px
-        rgba(0,0,0,.40);
+        0 15px 45px
+        rgba(0,0,0,.45);
 
     }
 
-    .title {
+
+    .brand {
 
       text-align: center;
 
-      font-size: 28px;
+      margin-bottom: 18px;
+
+    }
+
+
+    .brand h1 {
+
+      margin: 0;
+
+      font-size: 30px;
 
       font-weight: 900;
 
-      margin-bottom: 6px;
+      letter-spacing: 1px;
 
     }
 
-    .subtitle {
 
-      text-align: center;
+    .brand p {
+
+      margin:
+        7px 0 0;
 
       color: #aaa;
 
-      font-size: 15px;
+      font-size: 14px;
 
-      margin-bottom: 20px;
+      font-weight: 700;
+
+      letter-spacing: 1px;
 
     }
 
-    #reader {
+
+    .camera-box {
+
+      position: relative;
 
       width: 100%;
 
       background: #000;
 
-      border-radius: 15px;
+      border-radius: 17px;
 
       overflow: hidden;
 
-      min-height: 300px;
+      border:
+        1px solid #333;
 
     }
+
+
+    #reader {
+
+      width: 100%;
+
+      min-height: 300px;
+
+      background: #000;
+
+    }
+
+
+    /*
+     * Scanner library biasanya membuat
+     * video sendiri.
+     */
+
+    #reader video {
+
+      width: 100% !important;
+
+      height: auto !important;
+
+      object-fit: cover !important;
+
+    }
+
+
+    .scan-guide {
+
+      position: absolute;
+
+      left: 50%;
+
+      top: 50%;
+
+      width: 72%;
+
+      height: 34%;
+
+      transform:
+        translate(-50%, -50%);
+
+      border:
+        2px solid
+        rgba(255,255,255,.85);
+
+      border-radius: 14px;
+
+      pointer-events: none;
+
+      box-shadow:
+        0 0 0 9999px
+        rgba(0,0,0,.18);
+
+    }
+
 
     .status {
 
       text-align: center;
 
-      margin-top: 15px;
+      margin-top: 16px;
 
-      color: #ccc;
+      color: #d5d5d5;
 
       font-size: 15px;
 
       line-height: 1.5;
 
+      min-height: 23px;
+
     }
+
+
+    .success {
+
+      display: none;
+
+      background: #14351e;
+
+      color: #a7f3b8;
+
+      padding: 15px;
+
+      border-radius: 13px;
+
+      margin-top: 15px;
+
+      text-align: center;
+
+      font-size: 17px;
+
+      font-weight: 800;
+
+      line-height: 1.5;
+
+    }
+
 
     .error {
 
@@ -132,9 +243,9 @@
 
       margin-top: 15px;
 
-      border-radius: 12px;
+      border-radius: 13px;
 
-      line-height: 1.5;
+      line-height: 1.6;
 
       font-size: 14px;
 
@@ -142,27 +253,6 @@
 
     }
 
-    .success {
-
-      display: none;
-
-      background: #14351e;
-
-      color: #a7f3b8;
-
-      padding: 16px;
-
-      border-radius: 12px;
-
-      margin-top: 15px;
-
-      text-align: center;
-
-      font-size: 17px;
-
-      font-weight: 700;
-
-    }
 
     .back {
 
@@ -170,48 +260,80 @@
 
       width: 100%;
 
-      height: 52px;
+      height: 53px;
 
       margin-top: 18px;
 
       border: none;
 
-      border-radius: 12px;
+      border-radius: 13px;
 
-      background: #e53935;
+      background: #d71920;
 
       color: white;
 
       font-size: 17px;
 
-      font-weight: 800;
+      font-weight: 900;
 
       cursor: pointer;
 
     }
 
+
     .back:hover {
 
-      background: #c62828;
+      background: #b91218;
 
     }
+
+
+    .hint {
+
+      text-align: center;
+
+      color: #888;
+
+      font-size: 12px;
+
+      margin-top: 14px;
+
+    }
+
 
     @media(max-width:600px) {
 
       body {
+
         padding: 8px;
+
+        align-items: flex-start;
+
       }
+
 
       .container {
-        padding: 12px;
+
+        margin-top: 8px;
+
+        padding: 13px;
+
+        border-radius: 18px;
+
       }
 
-      .title {
-        font-size: 23px;
+
+      .brand h1 {
+
+        font-size: 25px;
+
       }
+
 
       #reader {
+
         min-height: 280px;
+
       }
 
     }
@@ -227,21 +349,22 @@
 <div class="container">
 
 
-  <div class="title">
+  <div class="brand">
 
-    LEE COOPER
+    <h1>LEE COOPER</h1>
 
-  </div>
-
-
-  <div class="subtitle">
-
-    SCANNER BARCODE SKU
+    <p>SCANNER BARCODE SKU</p>
 
   </div>
 
 
-  <div id="reader"></div>
+  <div class="camera-box">
+
+    <div id="reader"></div>
+
+    <div class="scan-guide"></div>
+
+  </div>
 
 
   <div
@@ -256,24 +379,30 @@
   <div
     id="success"
     class="success">
-
   </div>
 
 
   <div
     id="error"
     class="error">
-
   </div>
 
 
   <button
     class="back"
+    type="button"
     onclick="kembali()">
 
     KEMBALI
 
   </button>
+
+
+  <div class="hint">
+
+    Arahkan kamera ke barcode SKU
+
+  </div>
 
 
 </div>
@@ -283,14 +412,14 @@
 
 
 /* =========================================================
-   KONFIGURASI
+   SCANNER
    ========================================================= */
 
 let scanner = null;
 
 let scannerAktif = false;
 
-let sedangMemproses = false;
+let barcodeSedangDiproses = false;
 
 
 /* =========================================================
@@ -303,67 +432,50 @@ const statusBox =
   );
 
 
-const errorBox =
-  document.getElementById(
-    "error"
-  );
-
-
 const successBox =
   document.getElementById(
     "success"
   );
 
 
+const errorBox =
+  document.getElementById(
+    "error"
+  );
+
+
 /* =========================================================
-   BARCODE TERBACA
+   KIRIM STATUS KE FORM
    ========================================================= */
 
-function barcodeBerhasil(
-  decodedText
-) {
+function kirimStatusSiap() {
 
-  /*
-   * Jangan proses barcode berkali-kali
-   */
+  if (
+    window.opener &&
+    !window.opener.closed
+  ) {
 
-  if (sedangMemproses) {
-    return;
+    window.opener.postMessage(
+
+      {
+        type:
+          "LEE_COOPER_SCANNER_READY"
+      },
+
+      "*"
+
+    );
+
   }
 
-
-  const sku =
-    String(
-      decodedText || ""
-    ).trim();
+}
 
 
-  if (!sku) {
-    return;
-  }
+/* =========================================================
+   KIRIM BARCODE KE FORM
+   ========================================================= */
 
-
-  sedangMemproses = true;
-
-
-  statusBox.textContent =
-    "Memeriksa SKU...";
-
-
-  errorBox.style.display =
-    "none";
-
-
-  successBox.style.display =
-    "none";
-
-
-  /*
-   * KIRIM KE TAB FORM
-   *
-   * Form yang akan mengecek
-   * SKU ke REKAP STOK.
-   */
+function kirimBarcode(sku) {
 
   if (
     window.opener &&
@@ -381,15 +493,97 @@ function barcodeBerhasil(
 
       },
 
-      "https://script.google.com"
+      "*"
 
     );
 
+    return true;
+
   }
 
-  else {
 
-    sedangMemproses = false;
+  return false;
+
+}
+
+
+/* =========================================================
+   BARCODE BERHASIL
+   ========================================================= */
+
+async function barcodeBerhasil(
+  decodedText
+) {
+
+
+  /*
+   * Jangan proses banyak frame
+   * secara bersamaan.
+   */
+
+  if (
+    barcodeSedangDiproses
+  ) {
+
+    return;
+
+  }
+
+
+  const sku =
+    String(
+      decodedText || ""
+    )
+    .trim();
+
+
+  if (!sku) {
+
+    return;
+
+  }
+
+
+  barcodeSedangDiproses =
+    true;
+
+
+  statusBox.textContent =
+    "Barcode terbaca. Memeriksa SKU...";
+
+
+  errorBox.style.display =
+    "none";
+
+
+  successBox.style.display =
+    "none";
+
+
+  /*
+   * PENTING:
+   *
+   * Scanner TIDAK mengecek Google Sheet.
+   *
+   * Scanner hanya mengirim barcode
+   * ke halaman Apps Script.
+   *
+   * Apps Script yang akan mengecek:
+   *
+   * REKAP STOK!A:A
+   *
+   * Jika tidak ada -> ditolak.
+   */
+
+  const berhasil =
+    kirimBarcode(sku);
+
+
+  if (!berhasil) {
+
+    barcodeSedangDiproses =
+      false;
+
 
     tampilkanError(
 
@@ -397,12 +591,24 @@ function barcodeBerhasil(
 
       "<br><br>" +
 
-      "Silakan buka scanner dari " +
-      "Form Daily Stock."
+      "Buka scanner melalui tombol " +
+
+      "<b>SCAN</b> dari Form Daily Stock."
 
     );
 
+    return;
+
   }
+
+
+  /*
+   * Karena Apps Script yang menentukan
+   * valid / tidak valid,
+   * scanner belum langsung ditutup.
+   *
+   * Tunggu keputusan dari Form.
+   */
 
 }
 
@@ -417,16 +623,16 @@ window.addEventListener(
 
 
     /*
-     * Hanya menerima dari GitHub sendiri
-     * untuk keamanan.
-     *
-     * Perintah sebenarnya datang dari
-     * halaman Apps Script parent.
+     * Hanya menerima pesan
+     * dari halaman Apps Script.
      */
 
     if (
       event.origin !==
-      "https://script.google.com"
+      "https://script.google.com" &&
+
+      event.origin !==
+      "https://script.googleusercontent.com"
     ) {
 
       return;
@@ -452,39 +658,45 @@ window.addEventListener(
       "LEE_COOPER_SKU_VALID"
     ) {
 
-      statusBox.textContent =
-        "✓ SKU valid. Menutup scanner...";
+
+      barcodeSedangDiproses =
+        true;
 
 
       successBox.innerHTML =
-        "✓ SKU VALID<br><br>" +
-        "Barcode diterima oleh Form.";
+
+        "✓ SKU VALID" +
+
+        "<br><br>" +
+
+        "<b>" +
+
+        escapeHtml(
+          data.sku || ""
+        ) +
+
+        "</b>" +
+
+        "<br><br>" +
+
+        "SKU terdaftar di REKAP STOK.";
+
 
       successBox.style.display =
         "block";
 
 
+      statusBox.textContent =
+        "SKU valid. Mengirim ke Form...";
+
+
       await stopScanner();
 
-
-      /*
-       * OTOMATIS TUTUP
-       */
 
       setTimeout(
         function() {
 
-          try {
-
-            window.close();
-
-          }
-
-          catch(error) {
-
-            console.log(error);
-
-          }
+          window.close();
 
         },
         500
@@ -497,7 +709,7 @@ window.addEventListener(
 
 
     /* =====================================================
-       SKU DITOLAK
+       SKU TIDAK VALID
        ===================================================== */
 
     if (
@@ -505,7 +717,16 @@ window.addEventListener(
       "LEE_COOPER_SKU_INVALID"
     ) {
 
-      sedangMemproses = false;
+
+      /*
+       * JANGAN tutup kamera.
+       *
+       * User bisa langsung
+       * scan SKU berikutnya.
+       */
+
+      barcodeSedangDiproses =
+        false;
 
 
       successBox.style.display =
@@ -519,20 +740,61 @@ window.addEventListener(
         "<br><br>" +
 
         "SKU <b>" +
-        escapeHtml(data.sku || "") +
-        "</b> tidak terdapat di " +
 
-        "<b>REKAP STOK</b>." +
+        escapeHtml(
+          data.sku || ""
+        ) +
+
+        "</b> tidak ditemukan " +
+
+        "di <b>REKAP STOK</b>." +
 
         "<br><br>" +
 
-        "Silakan scan barcode yang terdaftar."
+        "Silakan scan SKU yang terdaftar."
 
       );
 
 
       statusBox.textContent =
-        "Kamera tetap aktif. Silakan scan lagi.";
+        "Kamera tetap aktif. Scan SKU lain.";
+
+
+      return;
+
+    }
+
+
+    /* =====================================================
+       ERROR VALIDASI
+       ===================================================== */
+
+    if (
+      data.type ===
+      "LEE_COOPER_SKU_ERROR"
+    ) {
+
+
+      barcodeSedangDiproses =
+        false;
+
+
+      tampilkanError(
+
+        "<b>GAGAL MEMERIKSA SKU</b>" +
+
+        "<br><br>" +
+
+        escapeHtml(
+          data.message ||
+          "Terjadi kesalahan."
+        )
+
+      );
+
+
+      statusBox.textContent =
+        "Kamera tetap aktif.";
 
 
       return;
@@ -596,10 +858,15 @@ function tampilkanError(
 
 
 /* =========================================================
-   START SCANNER
+   MULAI KAMERA
    ========================================================= */
 
 async function mulaiScanner() {
+
+
+  /*
+   * Pastikan library tersedia.
+   */
 
   if (
     typeof Html5Qrcode ===
@@ -608,13 +875,20 @@ async function mulaiScanner() {
 
     tampilkanError(
 
-      "<b>SCANNER LIBRARY GAGAL DIMUAT</b>" +
+      "<b>SCANNER GAGAL DIMUAT</b>" +
 
       "<br><br>" +
 
-      "Periksa koneksi internet lalu refresh."
+      "Library scanner tidak tersedia." +
+
+      "<br><br>" +
+
+      "Pastikan internet aktif kemudian refresh."
 
     );
+
+    statusBox.textContent =
+      "Scanner gagal dimuat.";
 
     return;
 
@@ -623,9 +897,14 @@ async function mulaiScanner() {
 
   try {
 
+
     statusBox.textContent =
       "Meminta izin kamera...";
 
+
+    /*
+     * Buat scanner.
+     */
 
     scanner =
       new Html5Qrcode(
@@ -633,37 +912,46 @@ async function mulaiScanner() {
       );
 
 
+    /*
+     * Konfigurasi barcode.
+     */
+
     const config = {
 
       fps: 10,
 
-      qrbox: function(
-        width,
-        height
-      ) {
 
-        const size =
-          Math.floor(
-            Math.min(
-              width,
-              height
-            ) * 0.72
-          );
+      qrbox:
+        function(
+          width,
+          height
+        ) {
+
+          const size =
+            Math.floor(
+              Math.min(
+                width,
+                height
+              ) * 0.72
+            );
 
 
-        return {
+          return {
 
-          width:
-            size,
+            width:
+              size,
 
-          height:
-            size
+            height:
+              size
 
-        };
+          };
 
-      },
+        },
 
-      aspectRatio: 1.0,
+
+      aspectRatio:
+        1.0,
+
 
       formatsToSupport: [
 
@@ -685,7 +973,14 @@ async function mulaiScanner() {
 
 
     /*
-     * KAMERA BELAKANG
+     * START CAMERA
+     *
+     * Ini bagian yang sengaja
+     * dibuat sederhana.
+     *
+     * Tidak ada fetch.
+     * Tidak ada akses Google Sheet.
+     * Tidak ada return URL.
      */
 
     await scanner.start(
@@ -708,8 +1003,8 @@ async function mulaiScanner() {
       function(errorMessage) {
 
         /*
-         * Error scan sementara
-         * diabaikan.
+         * Error scanning frame
+         * adalah normal.
          */
 
       }
@@ -725,11 +1020,15 @@ async function mulaiScanner() {
       "Kamera aktif. Arahkan ke barcode SKU.";
 
 
+    kirimStatusSiap();
+
   }
 
   catch(error) {
 
-    console.error(error);
+    console.error(
+      error
+    );
 
 
     const text =
@@ -748,10 +1047,21 @@ async function mulaiScanner() {
 
 
     if (
-      lower.includes("notallowederror") ||
-      lower.includes("permission") ||
-      lower.includes("denied")
+
+      lower.includes(
+        "notallowederror"
+      ) ||
+
+      lower.includes(
+        "permission"
+      ) ||
+
+      lower.includes(
+        "denied"
+      )
+
     ) {
+
 
       tampilkanError(
 
@@ -759,17 +1069,29 @@ async function mulaiScanner() {
 
         "<br><br>" +
 
-        "Buka pengaturan situs Chrome " +
+        "Buka pengaturan situs di Chrome " +
 
-        "→ Kamera → Izinkan → refresh halaman."
+        "→ Kamera → Izinkan → kemudian " +
+
+        "refresh halaman."
 
       );
 
+
+      statusBox.textContent =
+        "Kamera tidak dapat digunakan.";
+
     }
 
+
     else if (
-      lower.includes("notfounderror")
+
+      lower.includes(
+        "notfounderror"
+      )
+
     ) {
+
 
       tampilkanError(
 
@@ -781,9 +1103,15 @@ async function mulaiScanner() {
 
       );
 
+
+      statusBox.textContent =
+        "Kamera tidak ditemukan.";
+
     }
 
+
     else {
+
 
       tampilkanError(
 
@@ -794,6 +1122,10 @@ async function mulaiScanner() {
         escapeHtml(text)
 
       );
+
+
+      statusBox.textContent =
+        "Kamera gagal dibuka.";
 
     }
 
@@ -882,7 +1214,7 @@ window.addEventListener(
 
 
 /* =========================================================
-   SEBELUM DITUTUP
+   SEBELUM HALAMAN DITUTUP
    ========================================================= */
 
 window.addEventListener(
@@ -894,7 +1226,8 @@ window.addEventListener(
       scannerAktif
     ) {
 
-      scanner.stop()
+      scanner
+        .stop()
         .catch(
           function() {}
         );
@@ -903,7 +1236,6 @@ window.addEventListener(
 
   }
 );
-
 
 </script>
 
