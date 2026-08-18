@@ -11,16 +11,20 @@
 
   <title>LEE COOPER - SCANNER</title>
 
+
   <!-- HTML5 QR CODE -->
+
   <script
     src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js">
   </script>
+
 
   <style>
 
     * {
       box-sizing: border-box;
     }
+
 
     body {
 
@@ -47,6 +51,7 @@
 
     }
 
+
     .container {
 
       width: 100%;
@@ -65,6 +70,7 @@
 
     }
 
+
     .title {
 
       text-align: center;
@@ -77,6 +83,7 @@
 
     }
 
+
     .subtitle {
 
       text-align: center;
@@ -88,6 +95,7 @@
       margin-bottom: 20px;
 
     }
+
 
     #reader {
 
@@ -103,6 +111,7 @@
 
     }
 
+
     .status {
 
       text-align: center;
@@ -116,6 +125,7 @@
       line-height: 1.5;
 
     }
+
 
     .error {
 
@@ -136,6 +146,7 @@
       font-size: 14px;
 
     }
+
 
     .back {
 
@@ -163,6 +174,7 @@
 
     }
 
+
     .success {
 
       display: none;
@@ -185,6 +197,7 @@
 
     }
 
+
     .checking {
 
       display: none;
@@ -204,6 +217,7 @@
       font-size: 16px;
 
     }
+
 
     @media(max-width:600px) {
 
@@ -301,11 +315,15 @@
    KONFIGURASI
    ========================================================= */
 
+const APPS_SCRIPT_URL =
+  "https://script.google.com/macros/s/AKfycbx50fn9Y6LK_4VI0WytJlALv-uelJLRNn9pDKPIEwLNU3RUdkqu6f5Lnxc3IjyJezTv-A/exec";
+
+
 let scanner = null;
 
 let scannerAktif = false;
 
-let barcodeSedangDiproses = false;
+let sedangMemeriksa = false;
 
 
 /* =========================================================
@@ -313,47 +331,27 @@ let barcodeSedangDiproses = false;
    ========================================================= */
 
 const statusBox =
-  document.getElementById("status");
+  document.getElementById(
+    "status"
+  );
+
 
 const errorBox =
-  document.getElementById("error");
+  document.getElementById(
+    "error"
+  );
+
 
 const successBox =
-  document.getElementById("success");
+  document.getElementById(
+    "success"
+  );
+
 
 const checkingBox =
-  document.getElementById("checking");
-
-
-/* =========================================================
-   AMBIL RETURN URL
-   ========================================================= */
-
-function getReturnUrl() {
-
-  const params =
-    new URLSearchParams(
-      window.location.search
-    );
-
-  return params.get("return");
-
-}
-
-
-/* =========================================================
-   TAMPILKAN ERROR
-   ========================================================= */
-
-function tampilkanError(message) {
-
-  errorBox.innerHTML =
-    message;
-
-  errorBox.style.display =
-    "block";
-
-}
+  document.getElementById(
+    "checking"
+  );
 
 
 /* =========================================================
@@ -370,6 +368,23 @@ function resetPesan() {
 
   checkingBox.style.display =
     "none";
+
+}
+
+
+/* =========================================================
+   ERROR
+   ========================================================= */
+
+function tampilkanError(
+  message
+) {
+
+  errorBox.innerHTML =
+    message;
+
+  errorBox.style.display =
+    "block";
 
 }
 
@@ -402,6 +417,7 @@ async function stopScanner() {
 
   }
 
+
   scannerAktif =
     false;
 
@@ -417,11 +433,11 @@ async function barcodeBerhasil(
 ) {
 
   /*
-   * Jangan proses barcode kedua
-   * saat barcode pertama sedang dicek.
+   * Jangan membaca barcode kedua
+   * ketika barcode pertama sedang dicek.
    */
 
-  if (barcodeSedangDiproses) {
+  if (sedangMemeriksa) {
     return;
   }
 
@@ -437,7 +453,7 @@ async function barcodeBerhasil(
   }
 
 
-  barcodeSedangDiproses =
+  sedangMemeriksa =
     true;
 
 
@@ -453,68 +469,22 @@ async function barcodeBerhasil(
 
 
   /*
-   * AMBIL URL FORM
+   * CEK KE APPS SCRIPT
    */
-
-  const returnUrl =
-    getReturnUrl();
-
-
-  /*
-   * Jika scanner dibuka langsung,
-   * bukan dari Form Daily Stock.
-   */
-
-  if (!returnUrl) {
-
-    barcodeSedangDiproses =
-      false;
-
-    checkingBox.style.display =
-      "none";
-
-    tampilkanError(
-
-      "<b>LINK FORM TIDAK DITEMUKAN</b>" +
-
-      "<br><br>" +
-
-      "Scanner harus dibuka dari " +
-
-      "Form Daily Stock."
-
-    );
-
-    statusBox.textContent =
-      "Scanner belum terhubung ke Form.";
-
-    return;
-
-  }
-
 
   try {
 
-    /*
-     * CEK SKU KE APPS SCRIPT
-     */
-
-    const separator =
-      returnUrl.includes("?")
-        ? "&"
-        : "?";
-
-
-    const checkUrl =
-      returnUrl +
-      separator +
-      "checkSku=" +
-      encodeURIComponent(sku);
+    const url =
+      APPS_SCRIPT_URL +
+      "?checkSku=" +
+      encodeURIComponent(
+        sku
+      );
 
 
     const response =
       await fetch(
-        checkUrl,
+        url,
         {
           method: "GET",
           cache: "no-store"
@@ -525,7 +495,7 @@ async function barcodeBerhasil(
     if (!response.ok) {
 
       throw new Error(
-        "Server Apps Script tidak dapat dihubungi."
+        "Apps Script tidak dapat dihubungi."
       );
 
     }
@@ -536,7 +506,9 @@ async function barcodeBerhasil(
 
 
     /*
+     * =====================================================
      * SKU TIDAK ADA
+     * =====================================================
      */
 
     if (
@@ -544,7 +516,7 @@ async function barcodeBerhasil(
       hasil.valid !== true
     ) {
 
-      barcodeSedangDiproses =
+      sedangMemeriksa =
         false;
 
 
@@ -570,18 +542,18 @@ async function barcodeBerhasil(
 
         "<br><br>" +
 
-        "Barcode tidak dikirim ke Form."
+        "Barcode tidak dapat digunakan."
 
       );
 
 
       statusBox.textContent =
-        "Silakan scan SKU yang terdaftar.";
+        "Kamera tetap aktif. Silakan scan lagi.";
 
 
       /*
-       * Kamera tetap hidup.
-       * User bisa langsung scan lagi.
+       * PENTING:
+       * kamera TIDAK dimatikan.
        */
 
       return;
@@ -590,7 +562,9 @@ async function barcodeBerhasil(
 
 
     /*
+     * =====================================================
      * SKU VALID
+     * =====================================================
      */
 
     checkingBox.style.display =
@@ -617,7 +591,7 @@ async function barcodeBerhasil(
 
 
     /*
-     * KIRIM SKU KE FORM
+     * KIRIM KE TAB FORM
      */
 
     if (
@@ -641,6 +615,13 @@ async function barcodeBerhasil(
       );
 
     }
+    else {
+
+      throw new Error(
+        "Halaman Form Daily Stock tidak ditemukan."
+      );
+
+    }
 
 
     /*
@@ -652,6 +633,10 @@ async function barcodeBerhasil(
 
     statusBox.textContent =
       "✓ SKU berhasil dikirim ke Form.";
+
+
+    sedangMemeriksa =
+      false;
 
 
     /*
@@ -669,7 +654,9 @@ async function barcodeBerhasil(
 
         catch(error) {
 
-          console.log(error);
+          console.log(
+            error
+          );
 
         }
 
@@ -677,18 +664,18 @@ async function barcodeBerhasil(
       700
     );
 
-
   }
+
 
   catch(error) {
 
     console.error(
-      "ERROR CHECK SKU:",
+      "CHECK SKU ERROR:",
       error
     );
 
 
-    barcodeSedangDiproses =
+    sedangMemeriksa =
       false;
 
 
@@ -711,7 +698,7 @@ async function barcodeBerhasil(
 
 
     statusBox.textContent =
-      "Kamera tetap aktif. Silakan coba lagi.";
+      "Kamera tetap aktif. Coba scan kembali.";
 
   }
 
@@ -719,7 +706,7 @@ async function barcodeBerhasil(
 
 
 /* =========================================================
-   START SCANNER
+   MULAI KAMERA
    ========================================================= */
 
 async function mulaiScanner() {
@@ -728,7 +715,7 @@ async function mulaiScanner() {
 
 
   /*
-   * Pastikan library tersedia
+   * CEK LIBRARY
    */
 
   if (
@@ -761,7 +748,7 @@ async function mulaiScanner() {
 
 
     /*
-     * BUAT OBJECT SCANNER
+     * BUAT SCANNER
      */
 
     scanner =
@@ -771,15 +758,19 @@ async function mulaiScanner() {
 
 
     /*
-     * KONFIGURASI SCANNER
+     * KONFIGURASI
      */
 
     const config = {
 
       fps: 10,
 
+
       qrbox:
-        function(width, height) {
+        function(
+          width,
+          height
+        ) {
 
           const size =
             Math.floor(
@@ -827,7 +818,12 @@ async function mulaiScanner() {
 
 
     /*
-     * MULAI KAMERA
+     * =====================================================
+     * START KAMERA
+     * =====================================================
+     *
+     * BAGIAN INI SENGAJA TIDAK DIUBAH
+     * DARI VERSI SCANNER AWAL ANDA.
      */
 
     await scanner.start(
@@ -839,6 +835,7 @@ async function mulaiScanner() {
 
       config,
 
+
       function(decodedText) {
 
         barcodeBerhasil(
@@ -847,11 +844,14 @@ async function mulaiScanner() {
 
       },
 
+
       function(errorMessage) {
 
         /*
-         * Error scan sementara
-         * diabaikan.
+         * Error sementara ketika
+         * belum menemukan barcode.
+         *
+         * Diabaikan.
          */
 
       }
@@ -868,8 +868,7 @@ async function mulaiScanner() {
 
 
     /*
-     * INFORMASIKAN FORM
-     * BAHWA SCANNER SUDAH SIAP
+     * Beri tahu Form bahwa scanner siap
      */
 
     if (
@@ -891,6 +890,7 @@ async function mulaiScanner() {
     }
 
   }
+
 
   catch(error) {
 
@@ -933,11 +933,9 @@ async function mulaiScanner() {
 
         "<br><br>" +
 
-        "Buka pengaturan situs di Chrome " +
+        "Buka pengaturan situs Chrome " +
 
-        "→ Kamera → Izinkan → kemudian " +
-
-        "refresh halaman."
+        "→ Kamera → Izinkan → Refresh halaman."
 
       );
 
@@ -975,7 +973,9 @@ async function mulaiScanner() {
 
         "<br><br>" +
 
-        escapeHtml(text)
+        escapeHtml(
+          text
+        )
 
       );
 
@@ -1012,7 +1012,9 @@ async function kembali() {
 
     catch(error) {
 
-      console.log(error);
+      console.log(
+        error
+      );
 
     }
 
@@ -1031,7 +1033,9 @@ async function kembali() {
    ESCAPE HTML
    ========================================================= */
 
-function escapeHtml(value) {
+function escapeHtml(
+  value
+) {
 
   return String(value)
 
@@ -1064,7 +1068,7 @@ function escapeHtml(value) {
 
 
 /* =========================================================
-   START SAAT HALAMAN SIAP
+   JALANKAN SCANNER
    ========================================================= */
 
 window.addEventListener(
