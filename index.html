@@ -11,9 +11,6 @@
 
   <title>LEE COOPER - SCANNER</title>
 
-
-  <!-- HTML5 QR CODE -->
-
   <script
     src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js">
   </script>
@@ -24,7 +21,6 @@
     * {
       box-sizing: border-box;
     }
-
 
     body {
 
@@ -58,39 +54,23 @@
 
       max-width: 600px;
 
-      background: #181818;
-
-      border-radius: 20px;
-
-      padding: 20px;
-
-      box-shadow:
-        0 10px 40px
-        rgba(0,0,0,.40);
+      text-align: center;
 
     }
 
 
-    .title {
+    h1 {
 
-      text-align: center;
+      font-size: 28px;
 
-      font-size: 26px;
-
-      font-weight: 800;
-
-      margin-bottom: 8px;
+      margin: 0 0 8px;
 
     }
 
 
     .subtitle {
 
-      text-align: center;
-
-      color: #aaa;
-
-      font-size: 16px;
+      color: #bbb;
 
       margin-bottom: 20px;
 
@@ -101,64 +81,64 @@
 
       width: 100%;
 
+      min-height: 300px;
+
       background: #000;
 
-      border-radius: 15px;
+      border-radius: 18px;
 
       overflow: hidden;
 
-      min-height: 300px;
-
     }
 
 
-    .status {
-
-      text-align: center;
+    #status {
 
       margin-top: 15px;
-
-      color: #ccc;
-
-      font-size: 15px;
-
-      line-height: 1.5;
-
-    }
-
-
-    .error {
-
-      display: none;
-
-      background: #3a1515;
-
-      color: #ffb4b4;
 
       padding: 15px;
 
-      margin-top: 15px;
-
       border-radius: 12px;
 
-      line-height: 1.5;
+      background: #222;
 
-      font-size: 14px;
+      color: #ddd;
+
+      line-height: 1.5;
 
     }
 
 
-    .back {
+    #error {
 
-      display: block;
+      display: none;
+
+      margin-top: 15px;
+
+      padding: 15px;
+
+      border-radius: 12px;
+
+      background: #5c1515;
+
+      color: white;
+
+      text-align: left;
+
+      line-height: 1.6;
+
+    }
+
+
+    button {
 
       width: 100%;
 
-      height: 52px;
+      height: 55px;
 
-      margin-top: 18px;
+      margin-top: 15px;
 
-      border: none;
+      border: 0;
 
       border-radius: 12px;
 
@@ -166,55 +146,25 @@
 
       color: white;
 
-      font-size: 17px;
+      font-size: 18px;
 
-      font-weight: 800;
-
-      cursor: pointer;
+      font-weight: bold;
 
     }
 
 
     .success {
 
-      display: none;
-
-      background: #14351e;
-
-      color: #a7f3b8;
-
-      padding: 15px;
-
-      border-radius: 12px;
-
-      margin-top: 15px;
-
-      text-align: center;
-
-      font-size: 18px;
-
-      font-weight: 700;
+      background: #14532d !important;
 
     }
 
 
-    @media(max-width:600px) {
+    .loading {
 
-      body {
-        padding: 8px;
-      }
+      padding: 70px 20px;
 
-      .container {
-        padding: 12px;
-      }
-
-      .title {
-        font-size: 23px;
-      }
-
-      #reader {
-        min-height: 280px;
-      }
+      color: #aaa;
 
     }
 
@@ -229,49 +179,31 @@
 <div class="container">
 
 
-  <div class="title">
-
-    LEE COOPER
-
-  </div>
-
+  <h1>LEE COOPER</h1>
 
   <div class="subtitle">
-
     SCANNER BARCODE SKU
+  </div>
+
+
+  <div id="reader">
+
+    <div class="loading">
+      Menyiapkan kamera...
+    </div>
 
   </div>
 
 
-  <div id="reader"></div>
-
-
-  <div
-    id="status"
-    class="status">
-
-    Menyiapkan kamera...
-
+  <div id="status">
+    Meminta izin kamera...
   </div>
 
 
-  <div
-    id="success"
-    class="success">
-
-    ✓ BARCODE TERBACA
-
-  </div>
-
-
-  <div
-    id="error"
-    class="error">
-  </div>
+  <div id="error"></div>
 
 
   <button
-    class="back"
     onclick="kembali()">
 
     KEMBALI
@@ -286,246 +218,38 @@
 
 
 /* =========================================================
-   KONFIGURASI
+   PARAMETER
    ========================================================= */
 
+const params =
+  new URLSearchParams(
+    window.location.search
+  );
+
+
+const returnUrl =
+  params.get("returnUrl");
+
+
+/* =========================================================
+   SCANNER
+   ========================================================= */
 
 let scanner = null;
 
-let scannerAktif = false;
-
-let barcodeSudahTerbaca = false;
+let sudahScan = false;
 
 
 /* =========================================================
-   ELEMENT
+   STATUS
    ========================================================= */
 
-const statusBox =
-  document.getElementById(
-    "status"
-  );
-
-
-const errorBox =
-  document.getElementById(
-    "error"
-  );
-
-
-const successBox =
-  document.getElementById(
-    "success"
-  );
-
-
-/* =========================================================
-   KIRIM PESAN KE HALAMAN PEMBUKA
-   ========================================================= */
-
-function kirimKeParent(
-  data
-) {
-
-  /*
-   * Kirim ke window/tab yang membuka scanner.
-   */
-
-  if (
-    window.opener &&
-    !window.opener.closed
-  ) {
-
-    window.opener.postMessage(
-
-      data,
-
-      "https://script.google.com"
-
-    );
-
-  }
-
-}
-
-
-/* =========================================================
-   NOTIFIKASI SCANNER SIAP
-   ========================================================= */
-
-function kirimStatusSiap() {
-
-  /*
-   * Karena Apps Script dapat menggunakan
-   * beberapa host berbeda, kita juga kirim
-   * menggunakan wildcard.
-   *
-   * Ini tidak berisi data sensitif.
-   */
-
-  if (
-    window.opener &&
-    !window.opener.closed
-  ) {
-
-    window.opener.postMessage(
-
-      {
-        type:
-          "LEE_COOPER_SCANNER_READY"
-      },
-
-      "*"
-
-    );
-
-  }
-
-}
-
-
-/* =========================================================
-   BARCODE BERHASIL
-   ========================================================= */
-
-async function barcodeBerhasil(
-  decodedText
-) {
-
-  if (
-    barcodeSudahTerbaca
-  ) {
-
-    return;
-
-  }
-
-
-  const sku =
-    String(
-      decodedText || ""
-    ).trim();
-
-
-  if (!sku) {
-
-    return;
-
-  }
-
-
-  barcodeSudahTerbaca =
-    true;
-
-
-  statusBox.textContent =
-    "Barcode terbaca. Mengirim SKU...";
-
-
-  successBox.style.display =
-    "block";
-
-
-  /*
-   * KIRIM SKU
-   */
-
-  if (
-    window.opener &&
-    !window.opener.closed
-  ) {
-
-    window.opener.postMessage(
-
-      {
-        type:
-          "LEE_COOPER_BARCODE",
-
-        sku:
-          sku
-      },
-
-      "*"
-
-    );
-
-  }
-
-
-  /*
-   * STOP SCANNER
-   */
-
-  await stopScanner();
-
-
-  statusBox.textContent =
-    "SKU " +
-    sku +
-    " berhasil dikirim.";
-
-
-  /*
-   * Tutup tab otomatis
-   *
-   * Browser bisa saja melarang close().
-   */
-
-  setTimeout(
-    function() {
-
-      try {
-
-        window.close();
-
-      }
-
-      catch(error) {
-
-        console.log(
-          error
-        );
-
-      }
-
-    },
-    700
-  );
-
-}
-
-
-/* =========================================================
-   STOP SCANNER
-   ========================================================= */
-
-async function stopScanner() {
-
-  if (
-    scanner &&
-    scannerAktif
-  ) {
-
-    try {
-
-      await scanner.stop();
-
-    }
-
-    catch(error) {
-
-      console.log(
-        "Stop scanner:",
-        error
-      );
-
-    }
-
-  }
-
-
-  scannerAktif =
-    false;
+function status(text) {
+
+  document
+    .getElementById("status")
+    .innerHTML =
+    text;
 
 }
 
@@ -534,264 +258,17 @@ async function stopScanner() {
    ERROR
    ========================================================= */
 
-function tampilkanError(
-  message
-) {
+function tampilkanError(text) {
 
-  errorBox.innerHTML =
-    message;
+  const box =
+    document
+      .getElementById("error");
 
-  errorBox.style.display =
+  box.innerHTML =
+    text;
+
+  box.style.display =
     "block";
-
-
-  statusBox.textContent =
-    "Kamera tidak dapat digunakan.";
-
-}
-
-
-/* =========================================================
-   START SCANNER
-   ========================================================= */
-
-async function mulaiScanner() {
-
-  /*
-   * Pastikan library ada
-   */
-
-  if (
-    typeof Html5Qrcode ===
-    "undefined"
-  ) {
-
-    tampilkanError(
-
-      "<b>Scanner library gagal dimuat.</b>" +
-
-      "<br><br>" +
-
-      "Pastikan internet aktif lalu refresh."
-
-    );
-
-    return;
-
-  }
-
-
-  try {
-
-    statusBox.textContent =
-      "Meminta izin kamera...";
-
-
-    /*
-     * BUAT SCANNER
-     */
-
-    scanner =
-      new Html5Qrcode(
-        "reader"
-      );
-
-
-    /*
-     * KONFIGURASI
-     */
-
-    const config = {
-
-      fps: 10,
-
-      qrbox: function(
-        width,
-        height
-      ) {
-
-        const size =
-          Math.floor(
-            Math.min(
-              width,
-              height
-            ) * 0.72
-          );
-
-
-        return {
-
-          width:
-            size,
-
-          height:
-            size
-
-        };
-
-      },
-
-
-      aspectRatio:
-        1.0,
-
-
-      formatsToSupport: [
-
-        Html5QrcodeSupportedFormats.EAN_13,
-
-        Html5QrcodeSupportedFormats.EAN_8,
-
-        Html5QrcodeSupportedFormats.CODE_128,
-
-        Html5QrcodeSupportedFormats.CODE_39,
-
-        Html5QrcodeSupportedFormats.UPC_A,
-
-        Html5QrcodeSupportedFormats.UPC_E
-
-      ]
-
-    };
-
-
-    /*
-     * START KAMERA
-     *
-     * Gunakan environment agar
-     * memilih kamera belakang.
-     */
-
-    await scanner.start(
-
-      {
-        facingMode:
-          "environment"
-      },
-
-      config,
-
-      function(decodedText) {
-
-        barcodeBerhasil(
-          decodedText
-        );
-
-      },
-
-      function(errorMessage) {
-
-        /*
-         * Error scan sementara
-         * memang normal.
-         */
-
-      }
-
-    );
-
-
-    scannerAktif =
-      true;
-
-
-    statusBox.textContent =
-      "Kamera aktif. Arahkan ke barcode SKU.";
-
-
-    kirimStatusSiap();
-
-  }
-
-  catch(error) {
-
-    console.error(
-      error
-    );
-
-
-    const text =
-      String(
-        error &&
-        (
-          error.message ||
-          error.name ||
-          error
-        )
-      );
-
-
-    const lower =
-      text.toLowerCase();
-
-
-    if (
-      lower.includes(
-        "notallowederror"
-      ) ||
-      lower.includes(
-        "permission"
-      ) ||
-      lower.includes(
-        "denied"
-      )
-    ) {
-
-      tampilkanError(
-
-        "<b>IZIN KAMERA DITOLAK</b>" +
-
-        "<br><br>" +
-
-        "Buka pengaturan situs di Chrome " +
-
-        "→ Kamera → Izinkan → kemudian " +
-
-        "refresh halaman."
-
-      );
-
-    }
-
-
-    else if (
-      lower.includes(
-        "notfounderror"
-      )
-    ) {
-
-      tampilkanError(
-
-        "<b>KAMERA TIDAK DITEMUKAN</b>" +
-
-        "<br><br>" +
-
-        "Pastikan HP memiliki kamera " +
-
-        "dan kamera tidak sedang digunakan " +
-
-        "aplikasi lain."
-
-      );
-
-    }
-
-
-    else {
-
-      tampilkanError(
-
-        "<b>KAMERA TIDAK DAPAT DIGUNAKAN.</b>" +
-
-        "<br><br>" +
-
-        escapeHtml(text)
-
-      );
-
-    }
-
-  }
 
 }
 
@@ -800,17 +277,12 @@ async function mulaiScanner() {
    KEMBALI
    ========================================================= */
 
-async function kembali() {
+function kembali() {
 
-  await stopScanner();
+  if (returnUrl) {
 
-
-  if (
-    window.opener &&
-    !window.opener.closed
-  ) {
-
-    window.close();
+    window.location.href =
+      returnUrl;
 
   }
 
@@ -824,12 +296,393 @@ async function kembali() {
 
 
 /* =========================================================
-   ESCAPE HTML
+   BARCODE BERHASIL
    ========================================================= */
 
-function escapeHtml(
-  value
+function barcodeBerhasil(
+  decodedText
 ) {
+
+  if (sudahScan) {
+    return;
+  }
+
+  sudahScan =
+    true;
+
+
+  const sku =
+    String(decodedText || "")
+      .trim();
+
+
+  if (!sku) {
+
+    sudahScan =
+      false;
+
+    return;
+
+  }
+
+
+  status(
+    "✓ Barcode terbaca: <b>" +
+    escapeHtml(sku) +
+    "</b><br>Memproses..."
+  );
+
+
+  if (scanner) {
+
+    scanner.stop()
+
+      .then(
+        function() {
+
+          kirimSKU(sku);
+
+        }
+      )
+
+      .catch(
+        function() {
+
+          kirimSKU(sku);
+
+        }
+      );
+
+  }
+
+  else {
+
+    kirimSKU(sku);
+
+  }
+
+}
+
+
+/* =========================================================
+   KIRIM SKU KE APPS SCRIPT
+   ========================================================= */
+
+function kirimSKU(sku) {
+
+  if (!returnUrl) {
+
+    tampilkanError(
+
+      "<b>Alamat kembali tidak tersedia.</b>" +
+      "<br><br>" +
+      "Scanner harus dibuka melalui tombol SCAN " +
+      "pada Form Daily Stock."
+
+    );
+
+    return;
+
+  }
+
+
+  const separator =
+    returnUrl.includes("?")
+      ? "&"
+      : "?";
+
+
+  const target =
+    returnUrl +
+    separator +
+    "sku=" +
+    encodeURIComponent(sku);
+
+
+  status(
+    "✓ SKU ditemukan.<br>" +
+    "Kembali ke form..."
+  );
+
+
+  setTimeout(
+    function() {
+
+      window.location.href =
+        target;
+
+    },
+    500
+  );
+
+}
+
+
+/* =========================================================
+   START SCANNER
+   ========================================================= */
+
+async function mulaiScanner() {
+
+  try {
+
+    status(
+      "Meminta izin kamera..."
+    );
+
+
+    /* =====================================================
+       CEK BROWSER
+       ===================================================== */
+
+    if (
+      !navigator.mediaDevices ||
+      !navigator.mediaDevices.getUserMedia
+    ) {
+
+      throw new Error(
+        "Browser tidak mendukung akses kamera."
+      );
+
+    }
+
+
+    /* =====================================================
+       REQUEST KAMERA
+       ===================================================== */
+
+    const stream =
+      await navigator.mediaDevices
+        .getUserMedia({
+
+          video: {
+
+            facingMode: {
+              ideal: "environment"
+            }
+
+          },
+
+          audio: false
+
+        });
+
+
+    /* =====================================================
+       MATIKAN STREAM TEST
+       ===================================================== */
+
+    stream
+      .getTracks()
+      .forEach(
+        function(track) {
+
+          track.stop();
+
+        }
+      );
+
+
+    status(
+      "Izin kamera berhasil.<br>" +
+      "Menyiapkan scanner..."
+    );
+
+
+    /* =====================================================
+       BUAT SCANNER
+       ===================================================== */
+
+    scanner =
+      new Html5Qrcode(
+        "reader"
+      );
+
+
+    /* =====================================================
+       CARI KAMERA
+       ===================================================== */
+
+    const cameras =
+      await Html5Qrcode.getCameras();
+
+
+    if (
+      !cameras ||
+      cameras.length === 0
+    ) {
+
+      throw new Error(
+        "Kamera tidak ditemukan."
+      );
+
+    }
+
+
+    let cameraId =
+      cameras[0].id;
+
+
+    const belakang =
+      cameras.find(
+        function(camera) {
+
+          const label =
+            String(
+              camera.label || ""
+            )
+            .toLowerCase();
+
+
+          return (
+
+            label.includes("back") ||
+
+            label.includes("rear") ||
+
+            label.includes("environment") ||
+
+            label.includes("belakang")
+
+          );
+
+        }
+      );
+
+
+    if (belakang) {
+
+      cameraId =
+        belakang.id;
+
+    }
+
+
+    /* =====================================================
+       START
+       ===================================================== */
+
+    await scanner.start(
+
+      cameraId,
+
+      {
+
+        fps: 10,
+
+        qrbox: function(
+          width,
+          height
+        ) {
+
+          const size =
+            Math.floor(
+              Math.min(
+                width,
+                height
+              ) * 0.70
+            );
+
+          return {
+
+            width:
+              size,
+
+            height:
+              size
+
+          };
+
+        },
+
+        formatsToSupport: [
+
+          Html5QrcodeSupportedFormats.EAN_13,
+
+          Html5QrcodeSupportedFormats.EAN_8,
+
+          Html5QrcodeSupportedFormats.CODE_128,
+
+          Html5QrcodeSupportedFormats.CODE_39,
+
+          Html5QrcodeSupportedFormats.UPC_A,
+
+          Html5QrcodeSupportedFormats.UPC_E
+
+        ]
+
+      },
+
+      function(decodedText) {
+
+        barcodeBerhasil(
+          decodedText
+        );
+
+      },
+
+      function(errorMessage) {
+
+        // scan error normal
+        // tidak perlu ditampilkan
+
+      }
+
+    );
+
+
+    status(
+      "📷 Kamera aktif.<br>" +
+      "Arahkan kamera ke barcode SKU."
+    );
+
+
+  }
+
+  catch (error) {
+
+    console.error(error);
+
+
+    tampilkanError(
+
+      "<b>Kamera tidak dapat digunakan.</b>" +
+
+      "<br><br>" +
+
+      "<b>IZIN KAMERA DITOLAK</b>" +
+
+      "<br><br>" +
+
+      "Buka pengaturan situs di Chrome → " +
+      "Kamera → Izinkan → kemudian refresh halaman." +
+
+      "<br><br>" +
+
+      "Detail: " +
+
+      escapeHtml(
+        error.message ||
+        String(error)
+      )
+
+    );
+
+
+    status(
+      "Kamera gagal dibuka."
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   ESCAPE
+   ========================================================= */
+
+function escapeHtml(value) {
 
   return String(value)
 
@@ -862,38 +715,17 @@ function escapeHtml(
 
 
 /* =========================================================
-   HALAMAN SIAP
+   LOAD
    ========================================================= */
 
 window.addEventListener(
   "load",
   function() {
 
-    mulaiScanner();
-
-  }
-);
-
-
-/* =========================================================
-   SAAT HALAMAN DITUTUP
-   ========================================================= */
-
-window.addEventListener(
-  "beforeunload",
-  function() {
-
-    if (
-      scanner &&
-      scannerAktif
-    ) {
-
-      scanner.stop()
-        .catch(
-          function() {}
-        );
-
-    }
+    setTimeout(
+      mulaiScanner,
+      500
+    );
 
   }
 );
